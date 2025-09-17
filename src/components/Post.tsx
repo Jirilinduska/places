@@ -48,7 +48,7 @@ export const Post = ({ data } : Props) => {
         <Typography my={2}>{data.note}</Typography>
       )}
 
-      <Emoji />
+      <Emoji postID={data._id} />
 
     </Box>
   );

@@ -25,14 +25,12 @@ export interface ISearchResultAPI {
     }
 }
 
-
 export interface IPost extends INewPlaceData {
     tripDate: Date
     userID: string
     _id: string
     createdAt: Date
 }
-
 
 export interface IPinsWithPopup {
     _id: string
@@ -49,4 +47,14 @@ export interface IDashboardData {
     placesBeen: number
     placesWantVisit: number
     posts: IPinsWithPopup[]
+}
+
+
+export interface IReactions {
+    postID: string
+    hearts: string[]
+    trees: string[]
+    water: string[]
+    bikes: string[]
+    mountains: string[]
 }
