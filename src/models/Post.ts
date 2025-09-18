@@ -22,6 +22,7 @@ const PostSchema = new Schema<ICreatePost>({
     userID: { type: String, required: true },
     municipality: { type: String },
     county: { type: String },
+    isPublic: { type: Boolean, required: true },
     createdAt: { type: Date, default: Date.now }
   })
 

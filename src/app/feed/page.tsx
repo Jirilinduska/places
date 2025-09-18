@@ -8,7 +8,7 @@ import { Post } from "@/models/Post"
 export default async function FeedPage() {
 
     await connectDB()
-    const posts: IPost[] = (await Post.find({ beenThere: true }).sort({ tripDate: -1 }).lean<IPost[]>())
+    const posts: IPost[] = (await Post.find({ beenThere: true, isPublic: true }).sort({ tripDate: -1 }).lean<IPost[]>())
         .map(x => ({
         ...x,
         _id: x._id.toString(),

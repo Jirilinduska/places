@@ -19,20 +19,16 @@ export const Emoji = ({ postID } : Props) => {
 
     const { userId } = useAuth()
     const [reactions, setReactions] = useState<IReactions | null>(null)
-    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         const fetchData = async() => {
             try {
-                setLoading(true)
                 const res = await fetch(`/api/reactions/${postID}`, { method: "GET" })
                 if(!res.ok) {} // TODO
                 const data = await res.json()
                 setReactions(data.reactions)
             } catch (error) {
                 console.log(error)
-            } finally {
-                setLoading(false)
             }
         }
         fetchData()
@@ -40,7 +36,6 @@ export const Emoji = ({ postID } : Props) => {
 
 
     const handleReaction = async(reactionType: string, wantRemove: boolean) => {
-        setLoading(true)
         try {
             const res = await fetch("/api/reactions", {
                 method: "POST",
@@ -52,27 +47,26 @@ export const Emoji = ({ postID } : Props) => {
             setReactions(data.reactions)
         } catch (error) {
             console.log(error)
-        } finally {
-            setLoading(false)
         }
     }
 
-    if(loading) {
+    if(!reactions) {
         return (
             <Box display="flex" gap={2}>
-                <Skeleton variant="circular" width={40} height={40} />
-                <Skeleton variant="circular" width={40} height={40} />
-                <Skeleton variant="circular" width={40} height={40} />
-                <Skeleton variant="circular" width={40} height={40} />
-                <Skeleton variant="circular" width={40} height={40} />
+                <Skeleton variant="circular" width={30} height={30} />
+                <Skeleton variant="circular" width={30} height={30} />
+                <Skeleton variant="circular" width={30} height={30} />
+                <Skeleton variant="circular" width={30} height={30} />
+                <Skeleton variant="circular" width={30} height={30} />
             </Box>
         )
     }
 
-    if(reactions && userId) {
+    if(userId) {
         return (
             <Box my={2} display="flex" alignItems="center" gap={1}>
         
+
                 <IconButton onClick={() => handleReaction(REACTION_HEARTS, reactions.hearts.includes(userId))}>
                     <FavoriteIcon className={reactions.hearts.includes(userId) ? "text-red-500" : "text-black"} />
                 </IconButton>

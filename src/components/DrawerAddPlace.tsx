@@ -4,93 +4,19 @@ import { Drawer, Box, TextField, Button, Typography, Tooltip, IconButton } from 
 import { useState } from "react"
 import { AppMap } from "./AppMap"
 import { Stars } from "./Stars"
-import { INewPlaceData } from "@/interfaces/interfaces"
 import CancelIcon from '@mui/icons-material/Cancel';
 import { SearchInput } from "./SearchInput"
 import { UploadImages } from "./UploadImages"
 import { SelectTripDate } from "./SelectTripDate"
-import dayjs, { Dayjs } from "dayjs"
-
-export type FormState = {
-    loading: boolean,
-    error: "placeTitle" | "placeName" | ""
-    errorMsg: string
-}
+import { useAddNewPost } from "@/hooks/useAddNewPost"
+import PublicIcon from '@mui/icons-material/Public';
+import LockIcon from '@mui/icons-material/Lock';
 
 export const DrawerAddPlace = () => {
 
     const [open, setOpen] = useState(false)
-    const [state, setState] = useState<FormState>({
-        loading: false,
-        error: "",
-        errorMsg: ""
-    })
-    const [tripDate, setTripDate] = useState<Dayjs | null>(dayjs())
-
-    const [newPlaceData, setNewPlaceData] = useState<INewPlaceData>({
-        placeTitle: "",
-        placeName: "",
-        lat: 50.0755,
-        lon: 14.4378,
-        note: "",
-        images: [],
-        beenThere: true,
-        stars: 0,
-        country_code: "",
-        county: "",
-        municipality: ""
-    })
-
-    const handleSubmit = async() => {
-
-        if(!newPlaceData.placeTitle) {
-            setState((prev) => ({...prev, error: "placeTitle"}))
-            return
-        }
-        if(!newPlaceData.placeName) {
-            setState((prev) => ({...prev, error: "placeName"}))
-            return
-        }
-
-        setState(prev => ({ ...prev, loading: true }))
-
-        try {
-            const payload = {
-                ...newPlaceData,
-                tripDate: tripDate ? tripDate.toDate() : new Date()
-            }
-            
-            const res = await fetch("/api/posts", {
-                method: "Post",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            })
-
-            if(!res.ok) {
-                // TODO error!
-            }
-
-            setNewPlaceData({
-                placeTitle: "",
-                placeName: "",
-                lat: 50.0755,
-                lon: 14.4378,
-                note: "",
-                images: [],
-                beenThere: true,
-                stars: 0,
-                country_code: "",
-                municipality: "",
-                county: ""
-              })
-              setTripDate(dayjs())
-              setOpen(false)
-        } catch (error) {
-            setState(prev => ({ ...prev, errorMsg: "Error saving post" }))
-        } finally {
-            setState(prev => ({ ...prev, loading: false }))
-        }
-    }
+    const closeDrawer = () => setOpen(false)
+    const { state, setState, tripDate, setTripDate, newPlaceData, setNewPlaceData, handleSubmit } = useAddNewPost(closeDrawer)
 
   return (
     <>
@@ -170,12 +96,26 @@ export const DrawerAddPlace = () => {
                     fullWidth 
                 />
 
-                {newPlaceData.beenThere && (
-                    <UploadImages 
-                        imgArray={newPlaceData.images}
-                        setNewPlace={setNewPlaceData}
-                    />
-                )}
+                <Box display="flex" alignItems="center" justifyContent="space-between">
+                    {newPlaceData.beenThere && (
+                        <UploadImages 
+                            imgArray={newPlaceData.images}
+                            setNewPlace={setNewPlaceData}
+                        />
+                    )}
+                    <Box>
+                        <Tooltip title="Public">
+                            <IconButton onClick={() => setNewPlaceData((prev) => ({...prev, isPublic: true}))}>
+                                <PublicIcon className={newPlaceData.isPublic ? "text-blue-500" : ""} />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Private">
+                            <IconButton onClick={() => setNewPlaceData((prev) => ({...prev, isPublic: false}))}>
+                                <LockIcon className={!newPlaceData.isPublic ? "text-blue-500" : ""} />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                </Box>
 
                 {newPlaceData.beenThere && 
                     <>

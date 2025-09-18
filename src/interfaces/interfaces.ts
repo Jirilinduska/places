@@ -9,7 +9,8 @@ export interface INewPlaceData {
     stars: number,
     country_code: string,
     municipality: string,
-    county: string
+    county: string,
+    isPublic: boolean
 }
 
 
@@ -57,4 +58,10 @@ export interface IReactions {
     water: string[]
     bikes: string[]
     mountains: string[]
+}
+
+export interface IUser {
+    createdAt: Date | null
+    username: string | null
+    profileImg: string | null
 }

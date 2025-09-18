@@ -1,8 +1,8 @@
+import { FormState } from "@/hooks/useAddNewPost"
 import { INewPlaceData, ISearchResultAPI } from "@/interfaces/interfaces"
 import { Box, TextField } from "@mui/material"
 import debounce from "lodash.debounce"
 import { useCallback, useState } from "react"
-import { FormState } from "./DrawerAddPlace"
 
 
 const ResultItem = ({ name, handleCoords } : { name: string, handleCoords: () => void }) => {

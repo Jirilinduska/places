@@ -1,5 +1,6 @@
 "use client";
 
+import { useKeyboard } from "@/hooks/useKeyboard"
 import { Box, Modal } from "@mui/material"
 import { useState } from "react"
 
@@ -20,6 +21,8 @@ export const PostImages = ({ images }:{ images: string[] }) => {
 
     const [open, setOpen] = useState(false)
     const [imgIndex, setImgIndex] = useState<number>(0)
+
+    useKeyboard(open, setImgIndex)
 
   return (
     <Box
