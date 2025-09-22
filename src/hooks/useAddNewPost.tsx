@@ -83,6 +83,7 @@ export const useAddNewPost = (closeDrawer: () => void) => {
               enqueueSnackbar("Post created", { variant: "success" })
               closeDrawer()
         } catch (error) {
+            console.error(error)
             setState(prev => ({ ...prev, errorMsg: "Error saving post" }))
         } finally {
             setState(prev => ({ ...prev, loading: false }))

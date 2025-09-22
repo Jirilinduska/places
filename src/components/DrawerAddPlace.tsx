@@ -31,7 +31,9 @@ export const DrawerAddPlace = ({ onClose, open } : Props) => {
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                     <Typography variant="h6" fontWeight={600}>Add new place</Typography>
                     <Tooltip title="Close">
-                        <IconButton onClick={onClose} children={<CancelIcon fontSize="large" color="error" />} />
+                        <IconButton onClick={onClose}>
+                            <CancelIcon fontSize="large" color="error" />    
+                        </IconButton>
                     </Tooltip>
                 </Box>
 

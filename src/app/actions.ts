@@ -26,10 +26,13 @@ export async function deleteImageFromCloudinary(imgPublicUrl: string) {
         if (!publicID) {
             return { success: false, errMsg: "Post not found" }
         }
-        const result = await cloudinary.uploader.destroy(publicID)
+        await cloudinary.uploader.destroy(publicID)
         return { success: true }
-    } catch (error: any) {
-        return { success: false, errMsg: error.message }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return { success: false, errMsg: error.message }
+        }
+        return { success: false, errMsg: "Unknown error" }
     }
 }
 
@@ -41,8 +44,11 @@ export async function getUserFromMongo(userID: string) {
         }
         user = await UserMongo.findOne({ userIDClerk: userID })
         return { success: true, profileBG: user.profileBgImg, isAdmin: user.isAdmin }
-    } catch (error: any) {
-        return { success: false, errMsg: error.message }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return { success: false, errMsg: error.message }
+        }
+        return { success: false, errMsg: "Unknown error" }
     }
     
 }
@@ -77,8 +83,11 @@ export async function deletePost(postID: string) {
 
         return { success: true }
 
-    } catch (error: any) {
-        return { success: false, errMsg: error.message }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return { success: false, errMsg: error.message }
+        }
+        return { success: false, errMsg: "Unknown error" }
     }
 }
 
@@ -97,8 +106,11 @@ export async function createReport(postID: string, reason: ReportReason, comment
         } else {
             return { success: false, errMsg }
         }
-    } catch (error: any) {
-        return { success: false, errMsg: error.message }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return { success: false, errMsg: error.message }
+        }
+        return { success: false, errMsg: "Unknown error" }
     }
 }
 
@@ -106,8 +118,11 @@ export async function createActivity(userID: string, activity: ActitivyReason, r
     try {
         await Activity.create({ userID, activity, reportID, postID })
         return { success: true }
-    } catch (error: any) {
-        return { success: false, errMsg: error.message }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return { success: false, errMsg: error.message }
+        }
+        return { success: false, errMsg: "Unknown error" }
     }
 }
 
@@ -125,7 +140,10 @@ export async function changeUsernameClerk(userId: string, newUsername: string) {
           username: newUsername
         })
         return { success: true }
-    } catch (error: any) {
-        return { success: false, errMsg: error.message }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return { success: false, errMsg: error.message }
+        }
+        return { success: false, errMsg: "Unknown error" }
     }
 }
