@@ -1,5 +1,5 @@
 import { INewReport } from "@/interfaces/interfaces"
-import mongoose, { Schema, model, models } from "mongoose"
+import { Schema, model, models } from "mongoose"
 
 
 const ReportSchema = new Schema<INewReport>({

@@ -1,5 +1,5 @@
 import { IReactions } from "@/interfaces/interfaces"
-import mongoose, { Schema, model, models } from "mongoose"
+import { Schema, model, models } from "mongoose"
 
 
 const ReactionsSchema = new Schema<IReactions>({

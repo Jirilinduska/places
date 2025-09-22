@@ -80,7 +80,7 @@ export const UploadImages = ({ imgArray, setNewPlace } : { imgArray: string[], s
 
             {imgArray.map((x, i) => (
 
-                <Box width={100} height={100} position="relative">
+                <Box key={i} width={100} height={100} position="relative">
 
                     <IconButton 
                         onClick={() => handleDelete(x)} 

@@ -1,5 +1,5 @@
 import { IUserMongo } from "@/interfaces/interfaces"
-import mongoose, { Schema, model, models } from "mongoose"
+import { Schema, model, models } from "mongoose"
 
 
 const UserMongoSchema = new Schema<IUserMongo>({

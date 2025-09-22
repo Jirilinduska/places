@@ -1,5 +1,5 @@
 import { INewPlaceData } from "@/interfaces/interfaces"
-import mongoose, { Schema, model, models } from "mongoose"
+import { Schema, model, models } from "mongoose"
 
 
 interface ICreatePost extends INewPlaceData {

@@ -9,13 +9,16 @@ import PlaceIcon from '@mui/icons-material/Place';
 import dayjs from "dayjs"
 import { useEffect } from "react"
 import { DateRangeIcon } from "@mui/x-date-pickers"
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-const DefaultIcon: any = L.Icon.Default;
-delete DefaultIcon.prototype._getIconUrl;
+const DefaultIcon: typeof L.Icon.Default = L.Icon.Default;
+delete (DefaultIcon.prototype as any)._getIconUrl;
 DefaultIcon.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
 });
 L.Icon.Default = DefaultIcon;
 
