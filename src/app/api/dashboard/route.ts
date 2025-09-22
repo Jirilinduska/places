@@ -12,8 +12,16 @@ export async function GET(req: NextRequest) {
 
         const postsDB = await Post.find({ userID: userId }).lean()
 
-        const placesBeen      = postsDB.filter(x => x.beenThere).length
+        const postsBeen = postsDB.filter(x => x.beenThere)
+
         const placesWantVisit = postsDB.filter(x => !x.beenThere).length
+        const placesBeen      = postsDB.filter(x => x.beenThere).length
+
+        const placesBeenLastYear = postsBeen  
+            .filter(x => new Date(x.tripDate).getFullYear() === new Date().getFullYear() - 1).length
+
+        const placesBeenThisYear = postsBeen
+            .filter(x => new Date(x.tripDate).getFullYear() === new Date().getFullYear()).length
 
         const posts = postsDB.map(x => ({
             _id: x._id,
@@ -23,10 +31,10 @@ export async function GET(req: NextRequest) {
             placeName: x.placeName,
             images: x.images,
             beenThere: x.beenThere,
-            tripData: x.tripDate
+            tripDate: x.tripDate
         }))
         
-        return NextResponse.json({ posts, placesBeen, placesWantVisit })
+        return NextResponse.json({ posts, placesBeen, placesWantVisit, placesBeenLastYear, placesBeenThisYear })
 
     } catch (error) {
         return NextResponse.json({ error: "ERROR" }, { status: 500 })

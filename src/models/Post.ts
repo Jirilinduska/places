@@ -24,6 +24,6 @@ const PostSchema = new Schema<ICreatePost>({
     county: { type: String },
     isPublic: { type: Boolean, required: true },
     createdAt: { type: Date, default: Date.now }
-  })
+})
 
 export const Post = models.Post || model<ICreatePost>("Post", PostSchema)

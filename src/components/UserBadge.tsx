@@ -43,7 +43,7 @@ export const UserBadge = ({ userID, showLocation, lat, lon, placeName, county, m
                 : (
                     <Box width={40} height={40} borderRadius="50%">
                         <img
-                            src={userData.imageUrl}
+                            src={userData.imageUrl || "/images/default_avatar.png"}
                             alt={userData.username}
                             className="rounded-full"
                         />

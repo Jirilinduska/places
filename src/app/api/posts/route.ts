@@ -1,3 +1,4 @@
+import { createActivity } from "@/app/actions"
 import { connectDB } from "@/lib/mongo"
 import { Post } from "@/models/Post"
 import { Reactions } from "@/models/Reactions"
@@ -9,6 +10,9 @@ import { NextRequest, NextResponse } from "next/server"
 export async function POST(req: NextRequest) {
 
     const { userId } = await auth()
+
+    if(!userId) return // TODO 
+
     const body = await req.json()
     await connectDB()
     
@@ -21,8 +25,14 @@ export async function POST(req: NextRequest) {
         })
 
         await Reactions.create({ postID: newPost._id })
+        
+        const { success, errMsg } = await createActivity(userId, "upload_post", "", newPost._id)
 
-        return NextResponse.json({ success: true }, { status: 201 })
+        if(success) {
+            return NextResponse.json({ success: true }, { status: 201 })
+        } else {
+            return NextResponse.json({ success: false, error: errMsg }, { status: 500 })
+        }
 
     } catch (error) {
         console.log(error)

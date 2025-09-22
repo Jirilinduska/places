@@ -1,24 +1,22 @@
 "use client";
 
-import { Box, Tab, Tabs, Typography } from "@mui/material"
+import { Box, Tab, Tabs } from "@mui/material"
 import { useEffect, useState } from "react"
 import { borderRadius } from "@/constants/constants"
 import { DashboardStats } from "./DashboardStats"
-import { DrawerAddPlace } from "./DrawerAddPlace"
-import { AppMap } from "./AppMap"
-import { IDashboardData } from "@/interfaces/interfaces"
+import { DashboardValues, IDashboardData, IPinsWithPopup } from "@/interfaces/interfaces"
+import dynamic from "next/dynamic"
+import type { AppMapProps } from "./AppMap"
+import { DashboardPlaces } from "./DashboardPlaces"
+import { DashboardSettings } from "./DashboardSettings"
+import { useIsMobile } from "@/hooks/useIsMobile"
+const AppMap = dynamic<AppMapProps>(
+    () => import("./AppMap").then((mod) => mod.AppMap),
+    { ssr: false }
+  )
 
 
 // 🗺️ 1️⃣ Mapový panel
-
-// Interaktivní mapa hned nahoře (Leaflet + OSM).
-
-// Piny všech uživatelem navštívených míst.
-
-// Kliknutí na pin → modal s poznámkou + fotkami.
-
-// Rychlé přidání pinu → tlačítko “Add place” nebo klik přímo na mapu.
-
 // Centrování na poslední přidaný pin nebo “Home location”.
 
 // --------------------------------
@@ -26,115 +24,136 @@ import { IDashboardData } from "@/interfaces/interfaces"
 
 // 📊 2️⃣ Statistiky / přehled
 
-// Počet navštívených míst (celkově, za měsíc, tento týden).
-
-// Nejčastější kategorie nebo tagy (pokud přidáš tagy).
-
-// Mapa heatmapy → kde nejvíce pinů.
-
-// Graf trendu → kolik míst přidáno za poslední měsíc / rok.
-
 // Top fotky / místa → nejvíce lajkovaná nebo komentovaná místa (pokud budeš rozšiřovat).
-
-// --------------------------------
-
-
-
-// ⚡ 3️⃣ Quick actions
-
-// Add new place → modal s uploadem fotek + poznámkou.
-
-// Search places → search bar (Nominatim API nebo filtrování seznamu míst).
-
-// Export / share → tlačítko “Export my places” (PDF / JSON / map image).
-
-// Filter pins → např. podle data, tagu nebo vzdálenosti.
-
-// Navigate to last place → rychlé přiblížení mapy.
-
-// --------------------------------
-
-
-
-
-// 📰 4️⃣ Feed / timeline
-
-// Poslední přidaná místa → karty s fotkami + poznámkou.
-
-// Aktivity uživatele → “Přidal místo X” / “Nahrál fotku k Y”.
-
-// Carousel fotek → přehled nejhezčích fotek.
-
-// --------------------------------
-
 
 
 // 🧍‍♂️ 5️⃣ Personalizace
-
-// Přivítání: “Ahoj, [jméno]! Tady jsou tvoje navštívená místa”.
-
 // UserButton / avatar → rychlé nastavení účtu nebo logout.
 
 // Možnost nastavení mapy: satelitní/OSM, styl pinů.
 
+type DashboardState = {
+    loading: boolean
+    value: DashboardValues
+    mapCenter: [number, number]
+    mapZoom: number
+}
+
 export const Dashboard = () => {
 
-    const [loading, setLoading] = useState(false)
+    const isMobile = useIsMobile()
 
-    const [data, setData] = useState<IDashboardData | null>(null)
+    const [state, setState] = useState<DashboardState>({
+        loading: false,
+        value: "_stats_",
+        mapCenter: [50.0755, 19.5378],
+        mapZoom: 7
+    })
 
-    const [value, setValue] = useState(0)
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue)
+    const [data, setData] = useState<IDashboardData>()
+    const [pinsOnMap, setPinsOnMap] = useState<IPinsWithPopup[]>([])
+    const [selectedPin, setSelectedPin] = useState<IPinsWithPopup | null>(null)
+    const [isChange, setIsChange] = useState(1)
+
+    const handleChange = (event: React.SyntheticEvent, newValue: DashboardValues) => {
+        setState((prev) => ({...prev, value: newValue}))
     }
+
+    const handleItemClick = (item: IPinsWithPopup) => {
+        setSelectedPin(item)
+        setState((prev) => (
+            {   ...prev, 
+                mapZoom: 12,
+                mapCenter: [item.lat, item.lon]
+            }))
+    }
+    
+    // TODO - asi odstranit
+    const toggleChange = () => setIsChange(prev => prev + 1)
+
+    useEffect(() => {
+        if(!data) return
+        if(state.value === "_stats_") {
+            setSelectedPin(null)
+            setPinsOnMap(data.posts)
+        }
+        if(state.value === "_visited_") {
+            const newArray = data.posts.filter(x => x.beenThere)
+            setSelectedPin(null)
+            setPinsOnMap(newArray)
+        }
+        if(state.value === "_want_visit_") {
+            const newArray = data.posts.filter(x => !x.beenThere)
+            setSelectedPin(null)
+            setPinsOnMap(newArray)
+        }
+    }, [state.value])
 
     useEffect(() => {
         const fetchData = async() => {
-            setLoading(true)
+            setState((prev) => ({...prev, loading: true}))
             try {
                 const res = await fetch("/api/dashboard", { method: "GET" })
                 const data = await res.json()
                 setData(data)
+                setPinsOnMap(data.posts)
             } catch (error) {
                 console.log(error)
             } finally {
-                setLoading(false)
+                setState((prev) => ({...prev, loading: false}))
             }
         }
         fetchData()
-    }, [])
+    }, [isChange])
 
   return (
-    <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" flexDirection="column">
+    <Box minHeight="100vh" py={{ xs: 12, lg: 0 }} display="flex" alignItems="center" justifyContent="center" flexDirection="column">
 
         <Box border="2px solid black" width="95%" display="flex" justifyContent="space-between" sx={{ borderTopLeftRadius: borderRadius, borderTopRightRadius: borderRadius }}>
-
             <Box width={{ xs: "100%", lg: "50%" }}>
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                    <Tab label="Stats" />
-                    <Tab label="Visited" />
-                    <Tab label="Want visit" />
-                    <Tab label="Settings" />
+                <Tabs value={state.value} onChange={handleChange}>
+                    <Tab label="Stats" value="_stats_" />
+                    <Tab label="Visited places" value="_visited_" />
+                    <Tab label="Want visit" value="_want_visit_" />
+                    {!isMobile && <Tab label="Settings" value="_settings_" />}
                 </Tabs>
             </Box>
-
-            <DrawerAddPlace />
         </Box>
         
         <Box border="2px solid black" width="95%" display="flex" justifyContent="space-between"  flexDirection={{ xs: "column", lg: "row" }} sx={{ borderBottomLeftRadius: borderRadius, borderBottomRightRadius: borderRadius }}>
             
-            {data && <DashboardStats 
-                placesBeen={data.placesBeen}
-                placesWantVisit={data.placesWantVisit}
-            />}
+            <Box p={4} width={{ xs: "100%", lg: "50%" }} height={{ xs: "auto", lg: "600px" }}>
+
+                {state.value === "_stats_" && (
+                    <DashboardStats 
+                        placesBeen={data?.placesBeen ?? null}
+                        placesWantVisit={data?.placesWantVisit ?? null}
+                        loading={state.loading}
+                        placesBeenLastYear={data?.placesBeenLastYear ?? null}
+                        placesBeenThisYear={data?.placesBeenThisYear ?? null}
+                    />
+                )}
+
+                {/* // TODO - responzivita! */}
+                {(state.value === "_visited_"  || state.value === "_want_visit_") && (
+                    <DashboardPlaces 
+                        loading={state.loading}
+                        pinsOnMap={pinsOnMap}
+                        dashboardValue={state.value}
+                        onTitleClick={handleItemClick}
+                    />
+                )}
+
+                {state.value === "_settings_" && <DashboardSettings loading={state.loading} toggleChange={toggleChange} />}
+
+            </Box>
 
             <Box width={{ xs: "100%" }} bgcolor="black" overflow="hidden">
                 <AppMap 
-                    center={[50.0755, 14.4378]} 
+                    center={state.mapCenter} 
                     height="600px"
-                    zoom={13}
-                    // pins={[[50.0755, 14.4378]]}
-                    pinsWithPopup={data && data.posts || []} // TODO 
+                    zoom={state.mapZoom}
+                    pinsWithPopup={selectedPin ? [selectedPin] : pinsOnMap} 
                 />
             </Box>
         </Box>

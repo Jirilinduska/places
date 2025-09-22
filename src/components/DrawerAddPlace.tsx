@@ -1,7 +1,6 @@
 "use client";
 
 import { Drawer, Box, TextField, Button, Typography, Tooltip, IconButton } from "@mui/material";
-import { useState } from "react"
 import { AppMap } from "./AppMap"
 import { Stars } from "./Stars"
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -12,26 +11,27 @@ import { useAddNewPost } from "@/hooks/useAddNewPost"
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
 
-export const DrawerAddPlace = () => {
 
-    const [open, setOpen] = useState(false)
-    const closeDrawer = () => setOpen(false)
-    const { state, setState, tripDate, setTripDate, newPlaceData, setNewPlaceData, handleSubmit } = useAddNewPost(closeDrawer)
+type Props = {
+    open: boolean   
+    onClose: () => void
+}
+
+export const DrawerAddPlace = ({ onClose, open } : Props) => {
+
+    const { state, setState, tripDate, setTripDate, newPlaceData, setNewPlaceData, handleSubmit } = useAddNewPost(onClose)
 
   return (
     <>
-      <Button variant="contained" onClick={() => setOpen(true)}>
-        Open Form
-      </Button>
 
-      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+      <Drawer anchor="right" open={open} onClose={onClose}>
 
             <Box width={{ xs: "100vw", md: 700, lg: 900 }} p={3} display="flex" flexDirection="column" gap={2}>
 
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                     <Typography variant="h6" fontWeight={600}>Add new place</Typography>
                     <Tooltip title="Close">
-                        <IconButton onClick={() => setOpen(false)} children={<CancelIcon fontSize="large" color="error" />} />
+                        <IconButton onClick={onClose} children={<CancelIcon fontSize="large" color="error" />} />
                     </Tooltip>
                 </Box>
 

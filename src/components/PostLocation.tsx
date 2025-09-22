@@ -26,9 +26,10 @@ type Props = {
     lon: number
     municipality: string
     county: string
+    wantEdit?: boolean
 }
 
-export const PostLocation = ({ lat, lon, placeName, municipality, county } : Props) => {
+export const PostLocation = ({ lat, lon, placeName, municipality, county, wantEdit } : Props) => {
 
     const [open, setOpen] = useState(false)
 

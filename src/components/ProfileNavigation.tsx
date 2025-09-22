@@ -2,8 +2,7 @@
 
 import { isContentMine } from "@/helpers/isContentMine"
 import { Box, Divider, IconButton, Tab, Tabs, Tooltip } from "@mui/material"
-import { usePathname, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
 import SettingsIcon from '@mui/icons-material/Settings';
 import Link from "next/link"
 

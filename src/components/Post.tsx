@@ -5,14 +5,35 @@ import { Box, Typography } from "@mui/material"
 import { borderRadius } from "@/constants/constants"
 import { PostImages } from "./PostImages"
 import { Emoji } from "./Emoji"
-import EventIcon from '@mui/icons-material/Event';
 import { PostHeader } from "./PostHeader"
+import { useState } from "react"
+import { deletePost } from "@/app/actions"
+import { useSnackbar } from "notistack"
+import { TripDate } from "./TripDate"
 
 type Props = {
   data: IPost
 }
 
 export const Post = ({ data } : Props) => {
+
+  const { enqueueSnackbar } = useSnackbar()
+  const [isDeleted, setIsDeleted] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const handleDeletePost = async() => {
+    setLoading(true )
+    const res = await deletePost(data._id)
+    if(res.success) {
+      enqueueSnackbar("Post deleted", { variant: "success" })
+      setIsDeleted(true)
+    } else {
+      enqueueSnackbar(res.errMsg, { variant: "error" })
+    }
+    setLoading(false)
+  }
+
+  if(isDeleted) return null
 
   return (
     <Box  
@@ -25,16 +46,17 @@ export const Post = ({ data } : Props) => {
       color="black"
     >
 
-      <PostHeader data={data} />
+      <PostHeader
+        data={data} 
+        onDelete={handleDeletePost}
+        loading={loading}
+      />
 
-      <Box display="flex" alignItems="center" mt={1}>
-        <EventIcon fontSize="small"/>
-        <Typography fontSize="12px">Trip date: {data.tripDate.toLocaleDateString()}</Typography>
-      </Box>
+      <TripDate tripDate={data.tripDate}/>
 
       <Typography my={2} fontWeight={600}>{data.placeTitle}</Typography>
 
-      {data.images.length > 0 && <PostImages images={data.images} /> }
+      {data.images.length > 0 && <PostImages images={data.images} height="400px" /> }
 
       {data.note && (
         <Typography my={2}>{data.note}</Typography>

@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export interface INewPlaceData {
     placeTitle: string,
     placeName: string,
@@ -48,6 +50,8 @@ export interface IDashboardData {
     placesBeen: number
     placesWantVisit: number
     posts: IPinsWithPopup[]
+    placesBeenLastYear: number
+    placesBeenThisYear: number
 }
 
 
@@ -65,3 +69,37 @@ export interface IUser {
     username: string | null
     profileImg: string | null
 }
+
+export type ReportReason = "wrong_location" | "inappropriate_photo" | "spam" | "duplicate" | "other"
+
+export interface INewReport {
+    reportedBy: string
+    postID: Types.ObjectId
+    reason: ReportReason
+    comment: string
+    createdAt: Date
+}
+
+export interface IUserMongo {
+    userIDClerk: string
+    profileBgImg: string
+    isAdmin: boolean
+}
+
+export type ActitivyReason = 
+   | "upload_post" 
+   | "report_post"
+
+export interface IActivity {
+    userID: string
+    activity: ActitivyReason
+    createdAt: Date
+    postID?: string
+    reportID?: string
+}
+
+export interface IActivityWithID extends IActivity {
+    _id: string
+}
+
+export type DashboardValues = "_stats_" | "_visited_" | "_want_visit_" | "_settings_"

@@ -2,14 +2,27 @@
 
 import { Box, Typography } from "@mui/material";
 import Link from "next/link"
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import FeedIcon from '@mui/icons-material/Feed';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
-import { useAuth } from "@clerk/nextjs"
+import { SignedIn, useAuth } from "@clerk/nextjs"
+import { useEffect, useState } from "react"
+import { getUserFromMongo } from "@/app/actions"
+import { UserBadge } from "./UserBadge"
+import { AppNavigation } from "./AppNavigation"
 
 export const AppBar = () => {
 
-    const { userId } = useAuth()
+    const { userId, isSignedIn } = useAuth()
+    const [isAdmin, setIsAdmin] = useState<boolean>(false)
+
+    useEffect(() => {
+        const fetchData = async() => {
+            if(!userId || !isSignedIn) return
+            const { isAdmin, success } = await getUserFromMongo(userId)
+            if(success) setIsAdmin(isAdmin)
+        }
+        fetchData()
+    }, [])
 
   return (
     <Box
@@ -21,25 +34,45 @@ export const AppBar = () => {
         height="70px"
         display="flex"
         alignItems="center"
-        justifyContent="center"
+        justifyContent="space-between"
         gap={4}
+        px={2}
         zIndex={100}
     >
 
-        <Link href="/" className="flex flex-col items-center gap-1">
-            <DashboardIcon />
-            <Typography fontSize="12px">Dashboard</Typography>
-        </Link>
+        {/* // TODO - tady logo */}
+        <Box>
+            <Link href="/" className="flex items-center gap-2">
+                <img 
+                    width={40} 
+                    height={40}
+                    className="rounded-full"
+                    src="/images/earth_logo.png"
+                    alt="PlacesBeen"
+                />
+                <Typography fontWeight={600}>PlacesBeen</Typography>
+            </Link>
+        </Box>
 
-        <Link href="/feed" className="flex flex-col items-center gap-1">
-            <FeedIcon />
-            <Typography fontSize="12px">Feed</Typography>
-        </Link>
+        <AppNavigation />
 
-        <Link href={`/profile/${userId}`} className="flex flex-col items-center gap-1">
-            <PermContactCalendarIcon />
-            <Typography fontSize="12px">Profile</Typography>
-        </Link>
+        <SignedIn>
+            <Box display="flex" alignItems="center" gap={2}>
+                {/* <Link href="/feed" className="flex flex-col items-center gap-1">
+                    <FeedIcon />
+                    <Typography fontSize="12px">Feed</Typography>
+                </Link> */}
+                {isAdmin && 
+                    <Link href={`/app-dashboard`} className="flex flex-col items-center gap-1 ml-6 text-red-400">
+                        <PermContactCalendarIcon />
+                    <Typography fontSize="12px">Admin Panel</Typography>
+                </Link>
+                }
+            </Box>
+        </SignedIn>
+
+        {userId && <UserBadge userID={userId} />}
+
 
     </Box>
   );

@@ -17,7 +17,7 @@ const style = {
     p: 4,
 }
 
-export const PostImages = ({ images }:{ images: string[] }) => {
+export const PostImages = ({ images, height }:{ images: string[], height: string }) => {
 
     const [open, setOpen] = useState(false)
     const [imgIndex, setImgIndex] = useState<number>(0)
@@ -34,7 +34,7 @@ export const PostImages = ({ images }:{ images: string[] }) => {
     >
       <Box 
         width={images.length === 1 ? "100%" : "50%"}
-        height="400px" 
+        height={height} 
         sx={{ cursor: "pointer" }} 
         onClick={() => {
             setOpen(true)
@@ -50,7 +50,7 @@ export const PostImages = ({ images }:{ images: string[] }) => {
       {images.length > 1 && 
         <Box 
             width="50%" 
-            height="400px" 
+            height={height}
             sx={{ cursor: "pointer" }}
             onClick={() => {
                 setOpen(true)

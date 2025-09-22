@@ -4,8 +4,12 @@ import { INewPlaceData } from "@/interfaces/interfaces"
 import { Box, Button, IconButton, Typography } from "@mui/material"
 import { useState } from "react"
 import CancelIcon from '@mui/icons-material/Cancel';
+import { deleteImageFromCloudinary } from "@/app/actions"
+import { useSnackbar } from "notistack"
 
 export const UploadImages = ({ imgArray, setNewPlace } : { imgArray: string[], setNewPlace: React.Dispatch<React.SetStateAction<INewPlaceData>> }) => {
+
+    const { enqueueSnackbar } = useSnackbar()
 
     const [state, setState] = useState({
         loading: false,
@@ -42,19 +46,14 @@ export const UploadImages = ({ imgArray, setNewPlace } : { imgArray: string[], s
 
     const handleDelete = async(imgUrl: string) => {
         setState((prev) => ({...prev, loading: true}))
-        try {
-            const res = await fetch("/api/image/delete", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({imageURL: imgUrl})
-            })
+        const res = await deleteImageFromCloudinary(imgUrl)
+        if(res.success) {
             const newArr = imgArray.filter(x => x !== imgUrl)
             setNewPlace((prev) => ({...prev, images: newArr}))
-        } catch (error) {
-            console.error("Upload failed", error)
-        } finally {
-            setState((prev) => ({...prev, loading: false}))
+        } else {
+            enqueueSnackbar(res.errMsg, { variant: "error" })
         }
+        setState((prev) => ({...prev, loading: false}))
     }
 
   return (

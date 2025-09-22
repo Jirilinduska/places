@@ -7,8 +7,15 @@ import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
 import { UserBadge } from "./UserBadge"
 import { PostMenu } from "./PostMenu"
+import { ButtonOpenInNewTab } from "./ButtonOpenInNewTab"
 
-export const PostHeader = ({ data } : { data: IPost }) => {
+type Props = {
+    data: IPost
+    onDelete: () => Promise<void>
+    loading?: boolean
+}
+
+export const PostHeader = ({ data, onDelete, loading } : Props) => {
 
   return (
     <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -23,9 +30,11 @@ export const PostHeader = ({ data } : { data: IPost }) => {
             placeName={data.placeName}
         />
 
-        <Box display="flex" alignItems="center" gap={2}>
+        <Box display="flex" alignItems="center" gap={0}>
         
-            <TimeAgo date={data.createdAt} />
+            <Box mr={2}>
+                <TimeAgo date={data.createdAt} />
+            </Box>
         
             {data.isPublic 
                 ? (
@@ -38,9 +47,13 @@ export const PostHeader = ({ data } : { data: IPost }) => {
                 </Tooltip>
             )}
 
+            <ButtonOpenInNewTab href={`/post/${data._id}`} />
+
             <PostMenu 
                 postID={data._id} 
                 createdBy={data.userID} 
+                onDelete={onDelete}
+                loading={loading}
             />
 
         </Box>

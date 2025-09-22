@@ -1,5 +1,6 @@
 import { INewPlaceData } from "@/interfaces/interfaces"
 import dayjs, { Dayjs } from "dayjs"
+import { useSnackbar } from "notistack"
 import { useState } from "react"
 
 export type FormState = {
@@ -9,6 +10,8 @@ export type FormState = {
 }
 
 export const useAddNewPost = (closeDrawer: () => void) => {
+
+    const { enqueueSnackbar } = useSnackbar()
 
     const [state, setState] = useState<FormState>({
         loading: false,
@@ -77,6 +80,7 @@ export const useAddNewPost = (closeDrawer: () => void) => {
                 isPublic: true
               })
               setTripDate(dayjs())
+              enqueueSnackbar("Post created", { variant: "success" })
               closeDrawer()
         } catch (error) {
             setState(prev => ({ ...prev, errorMsg: "Error saving post" }))

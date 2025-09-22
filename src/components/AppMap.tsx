@@ -1,13 +1,14 @@
 "use client";
 
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet"
 import L, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { IPinsWithPopup } from "@/interfaces/interfaces"
-import { Box, Typography } from "@mui/material"
+import { Box, Button, Typography } from "@mui/material"
 import PlaceIcon from '@mui/icons-material/Place';
-import { AppButton } from "./AppButton"
 import dayjs from "dayjs"
+import { useEffect } from "react"
+import { DateRangeIcon } from "@mui/x-date-pickers"
 
 const DefaultIcon: any = L.Icon.Default;
 delete DefaultIcon.prototype._getIconUrl;
@@ -16,84 +17,103 @@ DefaultIcon.mergeOptions({
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
-
 L.Icon.Default = DefaultIcon;
 
 const iconBeedThere = new L.Icon({
-    iconUrl: '/images/red_pin.png',  // vlastní obrázek
-    iconSize: [60, 60],                    // velikost markeru [šířka, výška]
-    iconAnchor: [20, 40],                  // bod, který ukazuje přesně na pozici [x, y]
-    popupAnchor: [0, -40],                 // kde se objeví popup relativně k markeru
+  iconUrl: '/images/red_pin.png',
+  iconSize: [60, 60],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -40],
 })
 
 const iconWantVisit = new L.Icon({
-    iconUrl: '/images/black_pin.png',  // vlastní obrázek
-    iconSize: [60, 60],                    // velikost markeru [šířka, výška]
-    iconAnchor: [20, 40],                  // bod, který ukazuje přesně na pozici [x, y]
-    popupAnchor: [0, -40],                 // kde se objeví popup relativně k markeru
+  iconUrl: '/images/black_pin.png',
+  iconSize: [60, 60],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -40],
 })
 
-// [50.0755, 14.4378] // prague
-
-type Props = {
-    center: LatLngExpression
-    height: string
-    zoom: number
-    pins?: [number, number][]
-    pinsWithPopup?: IPinsWithPopup[] 
+export type AppMapProps = {
+  center: LatLngExpression
+  height: string
+  zoom: number
+  pins?: [number, number][]
+  pinsWithPopup?: IPinsWithPopup[]
 }
 
-export const AppMap = ({ center, height, zoom, pins, pinsWithPopup } : Props) => {
+
+const MapController = ({ center, zoom }: { center: LatLngExpression; zoom: number }) => {
+  
+  const map = useMap()
+
+  useEffect(() => {
+    map.flyTo(center, zoom)
+  }, [center, zoom, map])
+
+  return null
+}
+
+export const AppMap = ({ center, height, zoom, pins, pinsWithPopup }: AppMapProps) => {
+
+
+      console.log
+
   return (
     <MapContainer
-      center={center} // lat, long ... vychozi pozice mapy
+      center={center}
       zoom={zoom}
-      style={{ height: height, width: "100%" }} // h = 600px
+      style={{ height: height, width: "100%" }}
     >
+      <MapController center={center} zoom={zoom} />
+
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" // standartní
-        // url="//{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" // moderní
-        // url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" // satelitní
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
       />
 
-        {pins && pins.map(([lat, lon], i) => (
-          <Marker key={i} position={[lat, lon]} icon={iconBeedThere}>
-            <Popup>Pin {i + 1}</Popup>
-          </Marker>
-        ))}
+      {pins && pins.map(([lat, lon], i) => (
+        <Marker key={i} position={[lat, lon]} icon={iconBeedThere}>
+          <Popup>Pin {i + 1}</Popup>
+        </Marker>
+      ))}
 
-        {pinsWithPopup && pinsWithPopup.map((x) => (
-          <Marker key={x._id} position={[x.lat, x.lon]} icon={x.beenThere ? iconBeedThere : iconWantVisit}>
-            <Popup maxHeight={300} minWidth={300}>
-              <Box display="flex" gap={2}>
-                {<Box>
-                  <img
-                    width={100}
-                    height={100}
-                    src={x.images.length > 0 ? x.images[0] : "/images/fallback.png"}
-                  />
-                </Box>}
-                <Box>
-                  <Typography fontWeight={600}>{x.placeTitle}</Typography>
-                  <Typography>
-                      <PlaceIcon fontSize="small" />
-                      {x.placeName}
-                  </Typography>
-                  <Typography>
-                      <PlaceIcon fontSize="small" />
-                      {dayjs(x.tripDate).format("DD.MM.YYYY")}
-                  </Typography>
-                  <AppButton 
-                    size="small"
-                    text="Go to post"
-                    href={`/post/${x._id}`}
-                  />
-                </Box>
+      {pinsWithPopup && pinsWithPopup.map((x) => (
+        <Marker
+          key={x._id}
+          position={[x.lat, x.lon]}
+          icon={x.beenThere ? iconBeedThere : iconWantVisit}
+        >
+          <Popup maxHeight={300} minWidth={300}>
+            <Box display="flex" gap={2} alignItems="center">
+              <Box height="100%" width={100}>
+                <img
+                  alt={x.images[0] || "/images/fallback.png"}
+                  src={x.images.length > 0 ? x.images[0] : "/images/fallback.png"}
+                  className="w-full h-full"
+                />
               </Box>
-            </Popup>
-          </Marker>
-        ))}
+              <Box>
+                <Typography fontWeight={600}>{x.placeTitle}</Typography>
+                <Typography>
+                  <PlaceIcon fontSize="small" /> {x.placeName}
+                </Typography>
+                <Typography>
+                  <DateRangeIcon fontSize="small" /> 
+                  {dayjs(new Date(x.tripDate)).format("DD.MM.YYYY")}
+                </Typography>
+                <Button
+                  size="small"
+                  href={`/post/${x._id}`}
+                  target="_blank"
+                  fullWidth
+                >
+                  Go to post 
+                </Button>
+              </Box>
+            </Box>
+          </Popup>
+        </Marker>
+      ))}
     </MapContainer>
   );
 };
