@@ -1,5 +1,5 @@
 import { FormState } from "@/hooks/useAddNewPost"
-import { INewPlaceData, IPost, ISearchResultAPI } from "@/interfaces/interfaces"
+import { ISearchResultAPI } from "@/interfaces/interfaces"
 import { Box, TextField } from "@mui/material"
 import debounce from "lodash.debounce"
 import { useCallback, useState } from "react"
@@ -11,26 +11,19 @@ const ResultItem = ({ name, handleCoords } : { name: string, handleCoords: () =>
 
 type Props = {
     value: string, 
-    setNewPlace: React.Dispatch<React.SetStateAction<INewPlaceData>> 
+    setInputValue: React.Dispatch<React.SetStateAction<string>> 
+    handleSetCoords: (lat: string, lon: string, name: string, countryCode: string, municipality: string, county: string) => void
     state: FormState
     setState: React.Dispatch<React.SetStateAction<FormState>> 
 }
 
-export const SearchInput = ({ value, setNewPlace, state, setState } : Props) => {
+export const SearchInput = ({ value, setInputValue, state, setState, handleSetCoords } : Props) => {
 
     const [searchResults, setSearchResults] = useState<ISearchResultAPI[]>([])
 
     const handleCoords = (lat: string, lon: string, name: string, countryCode: string, municipality: string, county: string) => {
-        setNewPlace((prev) => (
-            {   ...prev, 
-                lat: Number(lat),
-                lon: Number(lon),
-                placeName: name,
-                country_code: countryCode,
-                municipality,
-                county
-        }))
-        setSearchResults([])
+      handleSetCoords(lat, lon, name, countryCode, municipality, county)
+      setSearchResults([])
     }
 
     const fetchPlaces = async (search: string) => {
@@ -64,7 +57,7 @@ export const SearchInput = ({ value, setNewPlace, state, setState } : Props) => 
         fullWidth
         value={value}
         onChange={(e) => {
-            setNewPlace((prev) => ({...prev,placeName: e.target.value}))
+            setInputValue(e.target.value)
             debouncedFetch(value)
             if(state.error === "placeName") setState(prev => ({ ...prev, error: "" }))
         }}

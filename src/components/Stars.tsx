@@ -1,25 +1,72 @@
-import { Box } from "@mui/material"
+"use client"
+
+import { Box, Typography } from "@mui/material"
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
+import { useEffect, useState } from "react"
+import { getUsernameFromClerk } from "@/app/actions"
 
+type Props = {
+    stars: number
+    canClick?: boolean
+    setStars?: (stars: number) => void
+    createdByUserID?: string
+}
 
-export const Stars = ({ stars, canClick, setStars } : { stars: number, canClick?: boolean, setStars?: (stars: number) => void }) => {
+export const Stars = ({ stars, canClick, setStars, createdByUserID } : Props) => {
 
-    const handleClick = (stars: number) => {
+    const [userName, setUserName] = useState("")
+
+    const handleClick = (starsNumber: number) => {
         if(canClick && setStars) {
-            setStars(stars)
+            setStars(starsNumber)
         } else {
             return
         }
     }
 
+    useEffect(() => {
+        if(canClick || !createdByUserID || stars === 0) return
+        const fetchUser = async() => {
+            const { username } = await getUsernameFromClerk(createdByUserID)
+            if(username) setUserName(username)
+        }
+        fetchUser()
+    }, [])
+
   return (
     <Box>
-        {stars >= 1 ? <StarIcon color="warning" onClick={() => handleClick(1)} /> : <StarBorderIcon color="warning" onClick={() => handleClick(1)} />}
-        {stars >= 2 ? <StarIcon color="warning" /> : <StarBorderIcon color="warning" />}
-        {stars >= 3 ? <StarIcon color="warning" /> : <StarBorderIcon color="warning" />}
-        {stars >= 4 ? <StarIcon color="warning" /> : <StarBorderIcon color="warning" />}
-        {stars >= 5 ? <StarIcon color="warning" /> : <StarBorderIcon color="warning" />}
+        <Typography fontSize="12px">
+            {canClick
+                ? "Place rating"
+                : (
+                <>
+                    <Typography component="span" fontSize="12px" fontWeight={600}>{userName}</Typography> rated this place
+                </>
+                )
+            }
+        </Typography>
+
+        {stars >= 1 
+            ? <StarIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }} onClick={() => handleClick(0)} /> 
+            : <StarBorderIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }} onClick={() => handleClick(1)} />
+        }
+        {stars >= 2 
+            ? <StarIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }} onClick={() => handleClick(0)} /> 
+            : <StarBorderIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }} onClick={() => handleClick(2)} />
+        }
+        {stars >= 3
+            ? <StarIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }} onClick={() => handleClick(0)} /> 
+            : <StarBorderIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }} onClick={() => handleClick(3)} />
+        }
+        {stars >= 4
+            ? <StarIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }}onClick={() => handleClick(0)} /> 
+            : <StarBorderIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }} onClick={() => handleClick(4)} />
+        }
+        {stars >= 5
+            ? <StarIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }}onClick={() => handleClick(0)} /> 
+            : <StarBorderIcon color="warning" sx={{ cursor: canClick ? "pointer" : "" }} onClick={() => handleClick(5)} />
+        }
     </Box>
   );
 };

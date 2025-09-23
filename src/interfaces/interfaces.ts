@@ -103,3 +103,9 @@ export interface IActivityWithID extends IActivity {
 }
 
 export type DashboardValues = "_stats_" | "_visited_" | "_want_visit_" | "_settings_"
+
+
+export interface IAppSettings {
+    maintenance: boolean
+    profileBgImages: string[]
+}

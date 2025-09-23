@@ -1,8 +1,8 @@
-import { Box, Tooltip, Typography } from "@mui/material"
-import ImageIcon from '@mui/icons-material/Image';
+import { Box, Typography } from "@mui/material"
 import { isContentMine } from "@/helpers/isContentMine"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { ProfileNavigation } from "@/components/ProfileNavigation"
+import { ModalChangeProfileBg } from "@/components/ModalChangeProfileBg"
 
 type Props = {
     children: React.ReactNode
@@ -40,11 +40,11 @@ export default async function ProfileLayout({ children, params } : Props) {
                     <Typography textAlign="center" fontWeight={600} fontSize="20px" my={2}>@{userData.username}</Typography>
                 </Box>
 
-                {isContentMine(userId, profileID) && 
-                    <Tooltip title="Change background">
-                        <ImageIcon fontSize="large" className="cursor-pointer absolute bottom-4 right-4 text-white"/>
-                    </Tooltip>
-                }
+                {isContentMine(userId, profileID) && (
+                    <Box className="cursor-pointer absolute bottom-4 right-4">
+                        <ModalChangeProfileBg userId={userId} />
+                    </Box>
+                )}
             </Box>
 
             <ProfileNavigation 

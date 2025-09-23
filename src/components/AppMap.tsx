@@ -75,9 +75,7 @@ export const AppMap = ({ center, height, zoom, pins, pinsWithPopup }: AppMapProp
       />
 
       {pins && pins.map(([lat, lon], i) => (
-        <Marker key={i} position={[lat, lon]} icon={iconBeedThere}>
-          <Popup>Pin {i + 1}</Popup>
-        </Marker>
+        <Marker key={i} position={[lat, lon]} icon={iconBeedThere}></Marker>
       ))}
 
       {pinsWithPopup && pinsWithPopup.map((x) => (

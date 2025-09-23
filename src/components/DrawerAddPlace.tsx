@@ -10,6 +10,7 @@ import { SelectTripDate } from "./SelectTripDate"
 import { useAddNewPost } from "@/hooks/useAddNewPost"
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
+import { useState } from "react"
 
 
 type Props = {
@@ -19,7 +20,9 @@ type Props = {
 
 export const DrawerAddPlace = ({ onClose, open } : Props) => {
 
-    const { state, setState, tripDate, setTripDate, newPlaceData, setNewPlaceData, handleSubmit } = useAddNewPost(onClose)
+    const { state, setState, tripDate, setTripDate, newPlaceData, setNewPlaceData, handleSubmit, handleSetStars, handleSetCoords } = useAddNewPost(onClose)
+
+    const [searchInputValue, setSearchInputValue] = useState("")
 
   return (
     <>
@@ -51,10 +54,11 @@ export const DrawerAddPlace = ({ onClose, open } : Props) => {
                 />
 
                 <SearchInput
-                    value={newPlaceData.placeName}
-                    setNewPlace={setNewPlaceData}
+                    value={searchInputValue}
+                    setInputValue={setSearchInputValue}
                     setState={setState}
                     state={state}
+                    handleSetCoords={handleSetCoords}
                 />
 
                 {newPlaceData.beenThere && <SelectTripDate setTripDate={setTripDate} tripDate={tripDate} />}
@@ -121,7 +125,11 @@ export const DrawerAddPlace = ({ onClose, open } : Props) => {
 
                 {newPlaceData.beenThere && 
                     <>
-                        <Stars stars={newPlaceData.stars} />
+                        <Stars 
+                            stars={newPlaceData.stars} 
+                            canClick
+                            setStars={handleSetStars}
+                        />
                     </>
                 }
 

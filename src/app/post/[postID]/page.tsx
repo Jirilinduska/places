@@ -26,11 +26,15 @@ export default async function PostPage({ params } : Props) {
 
     await connectDB()
     const post = await Post.findById(decodedPostID).lean<IPost>()
-
     if(!post) return notFound()
-
-        //     country_code: { type: String, required: true },
-        //     isPublic: { type: Boolean, required: true },
+    
+    if( (post.userID !== userId) && (!post.isPublic) ) {
+        return (
+            <Box bgcolor="white" minHeight="100vh" display="flex" alignItems="center" justifyContent="center">
+                <Typography>This post is private.</Typography>
+            </Box>
+        )
+    }
 
   return (
     <Box bgcolor="white" minHeight="100vh">
@@ -80,11 +84,23 @@ export default async function PostPage({ params } : Props) {
 
             <Divider />
 
-            {post.note && <Typography my={2}>{post.note}</Typography>}
+            {post.note && (
+                <Box my={4}>
+                    <Typography my={2}>{post.note}</Typography>
+                </Box>
+            )}
 
-            {post.stars > 0 && <Stars stars={post.stars} />}
+            {post.stars > 0 && (
+                <Box my={4}>
+                    <Stars stars={post.stars} createdByUserID={post.userID} />
+                </Box>
+            )}
 
-            <Emoji postID={postID} />
+            <Divider />
+
+            <Box mt={4}>
+                <Emoji postID={postID} />
+            </Box>
         </Box>
         
     </Box>

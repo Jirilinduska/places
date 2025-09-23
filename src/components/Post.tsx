@@ -10,6 +10,7 @@ import { useState } from "react"
 import { deletePost } from "@/app/actions"
 import { useSnackbar } from "notistack"
 import { TripDate } from "./TripDate"
+import { Stars } from "./Stars"
 
 type Props = {
   data: IPost
@@ -61,6 +62,8 @@ export const Post = ({ data } : Props) => {
       {data.note && (
         <Typography my={2}>{data.note}</Typography>
       )}
+
+      {data.stars > 0 && <Stars stars={data.stars} createdByUserID={data.userID} /> }
 
       <Emoji postID={data._id} />
 

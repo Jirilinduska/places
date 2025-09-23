@@ -36,6 +36,20 @@ export const useAddNewPost = (closeDrawer: () => void) => {
         isPublic: true,
     })
 
+    const handleSetStars = (stars: number) => setNewPlaceData((prev) => ({...prev, stars}))
+    
+    const handleSetCoords = (lat: string, lon: string, name: string, countryCode: string, municipality: string, county: string) => {
+        setNewPlaceData((prev) => (
+            {   ...prev, 
+                lat: Number(lat),
+                lon: Number(lon),
+                placeName: name,
+                country_code: countryCode,
+                municipality,
+                county
+        }))
+    }
+
     const handleSubmit = async() => {
 
         if(!newPlaceData.placeTitle) {
@@ -90,5 +104,5 @@ export const useAddNewPost = (closeDrawer: () => void) => {
         }
     }
 
-    return { state, setState, tripDate, setTripDate, newPlaceData, setNewPlaceData, handleSubmit }
+    return { state, setState, tripDate, setTripDate, newPlaceData, setNewPlaceData, handleSubmit, handleSetStars, handleSetCoords }
 }

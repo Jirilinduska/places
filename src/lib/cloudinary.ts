@@ -11,20 +11,16 @@ export default cloudinary
 
 
 export const getPublicIdFromUrl = (url: string) => {
-    try {
-      const parts = url.split('/');
-      // vezmeme všechny části za "upload/"
-      const uploadIndex = parts.findIndex(p => p === 'upload');
-      if (uploadIndex === -1) return null;
-  
-      // spojíme zbytek do public_id s cestou + odstraníme ext
-      const publicIdWithExt = parts.slice(uploadIndex + 1).join('/');
-      const lastDot = publicIdWithExt.lastIndexOf('.');
-      const publicId = lastDot !== -1 ? publicIdWithExt.slice(0, lastDot) : publicIdWithExt;
-      return publicId;
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
+  try {
+    const parts = url.split("/");
+    const uploadIndex = parts.findIndex(p => p === "upload");
+    if (uploadIndex === -1) return null;
+    const withoutVersion = parts.slice(uploadIndex + 2).join("/");
+    const lastDot = withoutVersion.lastIndexOf(".");
+    return lastDot !== -1 ? withoutVersion.slice(0, lastDot) : withoutVersion;
+  } catch (err) {
+    console.error("getPublicIdFromUrl error:", err);
+    return null;
   }
+}
   

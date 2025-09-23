@@ -1,15 +1,20 @@
 "use server"
 
-import { ActitivyReason, ReportReason } from "@/interfaces/interfaces"
+import { ActitivyReason, IAppSettings, IPost, ReportReason } from "@/interfaces/interfaces"
 import cloudinary, { getPublicIdFromUrl } from "@/lib/cloudinary"
 import { connectDB } from "@/lib/mongo"
 import { Activity } from "@/models/Activity"
+import { AppSettings } from "@/models/AppSettings"
 import { Post } from "@/models/Post"
 import { Reactions } from "@/models/Reactions"
 import { Report } from "@/models/Report"
 import { UserMongo } from "@/models/UserMongo"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 
+
+
+
+// ========== CLERK ==========
 export async function getUserFromClerk(userID: string) {
     const client = clerkClient()
     const user = (await client).users.getUser(userID)
@@ -20,6 +25,16 @@ export async function getUserFromClerk(userID: string) {
     return { username, imageUrl }
 }
 
+export async function getUsernameFromClerk(userID: string) {
+    const client = clerkClient()
+    const user = (await client).users.getUser(userID)
+
+    const username = (await user).username
+
+    return { username }
+}
+
+// ========== CLOUDINARY ==========
 export async function deleteImageFromCloudinary(imgPublicUrl: string) {
     try {
         const publicID = getPublicIdFromUrl(imgPublicUrl)
@@ -51,6 +66,34 @@ export async function getUserFromMongo(userID: string) {
         return { success: false, errMsg: "Unknown error" }
     }
     
+}
+
+export async function UpdatePost(newPost: IPost) {
+    
+    const { userId } = await auth()
+    const { _id, userID, ...updateData } = newPost
+
+    if(userId !== newPost.userID) {
+        return { success: false, errMsg: "You cannot do that" }
+    }
+
+    try {
+        await connectDB()
+        const result = await Post.findOneAndUpdate(
+            { _id, userID },
+            { $set: updateData },
+            { new: true }
+        )
+        if (!result) {
+            return { success: false, errMsg: "Somethng went wrong" }
+        }
+        return { success: true }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return { success: false, errMsg: error.message }
+        }
+        return { success: false, errMsg: "Unknown error" }
+    }
 }
 
 export async function deletePost(postID: string) {
@@ -140,6 +183,57 @@ export async function changeUsernameClerk(userId: string, newUsername: string) {
           username: newUsername
         })
         return { success: true }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return { success: false, errMsg: error.message }
+        }
+        return { success: false, errMsg: "Unknown error" }
+    }
+}
+
+
+export async function getAdminAppSettings(userId: string) {
+
+    const { isAdmin } = await getUserFromMongo(userId)
+    if(!isAdmin) return { success: false, errMsg: "Not allowed" } 
+
+    try {
+        let appSettingsDB = await AppSettings.findOne().lean<IAppSettings>()
+        if(!appSettingsDB) {
+            const created = await AppSettings.create({})
+            appSettingsDB = created.toObject()
+        } 
+
+        const appSettings: IAppSettings = {
+            maintenance: appSettingsDB?.maintenance || false,
+            profileBgImages: appSettingsDB?.profileBgImages || []
+        }
+
+        return { success: true, appSettings }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return { success: false, errMsg: error.message }
+        }
+        return { success: false, errMsg: "Unknown error" }
+    }
+}
+
+export async function uploadAdminProfileBgImage(userId: string, base64data: string) {
+
+    const { isAdmin } = await getUserFromMongo(userId)
+    if(!isAdmin) return { success: false, errMsg: "Not allowed" } 
+
+    try {
+        let appSettings = await AppSettings.findOne()
+        if(!appSettings) {
+            appSettings = await AppSettings.create({})
+        }
+
+        const uploaded = await cloudinary.uploader.upload(base64data)
+        const imgUrl = uploaded.secure_url 
+        appSettings?.profileBgImages.push(imgUrl)
+        await appSettings.save()
+        return { success: true, imgUrl }
     } catch (error: unknown) {
         if (error instanceof Error) {
             return { success: false, errMsg: error.message }
