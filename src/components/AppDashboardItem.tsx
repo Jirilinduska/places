@@ -1,5 +1,6 @@
 "use client"
 
+import { borderRadius } from "@/constants/constants"
 import { Box, Button, Card, CardActions, CardContent, Typography } from "@mui/material"
 import { useRouter } from "next/navigation"
 
@@ -24,7 +25,7 @@ export const AppDashboardItem = ({ icon, mainTitle, subTitle, routerPushUrl, but
     }
 
   return (
-    <Card sx={{ minWidth: 275 }}>
+    <Card sx={{ minWidth: 275, boxShadow: 3, borderRadius: borderRadius }}>
       <CardContent>
         <Box display="flex" justifyContent="center" mb={2}>{icon}</Box>
         <Typography mb={1} textAlign="center" variant="h4" component="div">{mainTitle}</Typography>

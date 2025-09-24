@@ -1,7 +1,7 @@
 import { getAdminAppSettings } from "@/app/actions"
 import { auth } from "@clerk/nextjs/server"
 import { Box, Typography } from "@mui/material"
-import { AppSettingsWrapper } from "@/components/AppSettingsWrapper"
+import { AppSettings } from "@/components/AppSettings"
 
 export default async function AppDashboardSettingsPage() {
 
@@ -18,7 +18,7 @@ export default async function AppDashboardSettingsPage() {
     }
 
     if(appSettings) {
-        return <AppSettingsWrapper appSettings={appSettings} />
+        return <AppSettings appSettings={appSettings} />
     }
 
     return null

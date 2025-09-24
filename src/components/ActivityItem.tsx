@@ -15,6 +15,9 @@ export const ActivityItem = ({ data } : { data: IActivityWithID }) => {
             case "upload_post":
                 value = "Uploaded new post"
                 break;
+            case "resolve_report":
+                value = "Resolved report"
+                break;
             default:
                 value = ""
                 break;
@@ -23,7 +26,7 @@ export const ActivityItem = ({ data } : { data: IActivityWithID }) => {
     }
 
     const handleButton = () => {
-        if(data.activity === "report_post") {
+        if(data.activity === "report_post" || data.activity === "resolve_report") {
             return (
                 <Button
                     href={`/app-dashboard/reports/${data.reportID}`}

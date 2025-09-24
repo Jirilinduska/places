@@ -7,7 +7,10 @@ const ReportSchema = new Schema<INewReport>({
     reportedBy: { type: String, required: true },
     reason: { type: String, required: true },
     comment: { type: String, default: "" },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    isSolved: { type: Boolean, default: false },
+    solvedBy: { type: String, default: "" },
+    commentSolvedBy: { type: String, default: "" },
 })
 
 export const Report = models.Report || model<INewReport>("Report", ReportSchema)

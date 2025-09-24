@@ -74,10 +74,17 @@ export type ReportReason = "wrong_location" | "inappropriate_photo" | "spam" | "
 
 export interface INewReport {
     reportedBy: string
-    postID: Types.ObjectId
+    postID: Types.ObjectId | string
     reason: ReportReason
     comment: string
-    createdAt: Date
+    createdAt: Date | string
+    isSolved: boolean
+    solvedBy: string,
+    commentSolvedBy: string
+}
+
+export interface IReport extends INewReport {
+    _id: string
 }
 
 export interface IUserMongo {
@@ -89,6 +96,7 @@ export interface IUserMongo {
 export type ActitivyReason = 
    | "upload_post" 
    | "report_post"
+   | "resolve_report"
 
 export interface IActivity {
     userID: string
@@ -104,8 +112,21 @@ export interface IActivityWithID extends IActivity {
 
 export type DashboardValues = "_stats_" | "_visited_" | "_want_visit_" | "_settings_"
 
+export type ResolveReport = "delete_post" | "keep_post"
 
 export interface IAppSettings {
     maintenance: boolean
     profileBgImages: string[]
+}
+
+export type ClerkUser = {
+    id: string
+    banned: boolean
+    createdAt: number
+    lastSignInAt: number | null
+    imageUrl: string
+    username: string | null
+    firstName: string | null
+    lastName: string | null
+    lastActiveAt: number | null
 }

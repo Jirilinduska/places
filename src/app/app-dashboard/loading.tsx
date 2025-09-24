@@ -1,9 +1,10 @@
+import { AppDashboardWrapper } from "@/components/AppDashboardWrapper"
 import { Box, Skeleton, Typography } from "@mui/material"
 
 export default async function AppDashboardPageLoading() {
 
   return (
-    <Box border="1px solid black" width="100%" mx={2} p={2} color="black">
+    <AppDashboardWrapper>
 
       <Typography mb={2} variant="h6" fontWeight={600}>App stats</Typography>
 
@@ -21,7 +22,7 @@ export default async function AppDashboardPageLoading() {
       <Skeleton variant="rectangular" width={600} height={30} sx={{ mb: 1 }} />
       <Skeleton variant="rectangular" width={600} height={30} sx={{ mb: 1 }} />
       <Skeleton variant="rectangular" width={600} height={30} sx={{ mb: 1 }} />
-    
-    </Box>
+
+    </AppDashboardWrapper>
   );
 }

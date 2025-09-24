@@ -14,9 +14,10 @@ type Props = {
     placeName?: string
     county?: string
     municipality?: string
+    hideImg?: boolean
 }
 
-export const UserBadge = ({ userID, showLocation, lat, lon, placeName, county, municipality } : Props) => {
+export const UserBadge = ({ userID, showLocation, lat, lon, placeName, county, municipality, hideImg } : Props) => {
 
     const [loading, setLoading] = useState(false)
     const [userData, setUserData] = useState({
@@ -38,17 +39,20 @@ export const UserBadge = ({ userID, showLocation, lat, lon, placeName, county, m
     <Box display="flex" alignItems="center" gap={1}>
 
         <Link href={`/profile/${userID}`} target="_blank">
-            {loading
+
+            {loading 
                 ? <Skeleton variant="circular" width={40} height={40} />
-                : (
-                    <Box width={40} height={40} borderRadius="50%">
-                        <img
-                            src={userData.imageUrl || "/images/default_avatar.png"}
-                            alt={userData.username}
-                            className="rounded-full"
-                        />
-                    </Box> 
-                )
+                : !hideImg 
+                    ? (
+                        <Box width={40} height={40} borderRadius="50%">
+                            <img
+                                src={userData.imageUrl || "/images/default_avatar.png"}
+                                alt={userData.username}
+                                className="rounded-full"
+                            />
+                        </Box> 
+                    )
+                : null
             
             }
         </Link>

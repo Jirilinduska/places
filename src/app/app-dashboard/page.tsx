@@ -10,6 +10,7 @@ import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
 import FeedIcon from '@mui/icons-material/Feed';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { AppDashboardWrapper } from "@/components/AppDashboardWrapper"
 
 const APP_DASHBOARD = "/app-dashboard"
 
@@ -18,7 +19,8 @@ export default async function AppDashboardPage() {
   const client = await clerkClient()
   const usersCount = await client.users.getCount()
   const postsCount = (await Post.find()).length
-  const reportsCount = (await Report.find()).length
+  const totalReportsCount = (await Report.find()).length
+  const unresolvedReportsCount = (await Report.find({ isSolved: false })).length
 
   const activities = await Activity.find().lean<IActivityWithID[]>().limit(3).sort({ createdAt: -1 })
   const activitiesPlain = activities.map(x => ({
@@ -30,7 +32,7 @@ export default async function AppDashboardPage() {
 // TODO 
 
   return (
-    <Box border="1px solid black" width="100%" mx={2} p={2} color="black">
+    <AppDashboardWrapper>
 
       <Typography mb={2} variant="h6" fontWeight={600}>App stats</Typography>
 
@@ -54,8 +56,8 @@ export default async function AppDashboardPage() {
 
         <AppDashboardItem 
           icon={<ReportProblemIcon />}
-          mainTitle={reportsCount.toString()}
-          subTitle="Reports"
+          mainTitle={`${unresolvedReportsCount} / ${totalReportsCount}`}
+          subTitle="Unsolved Reports"
           routerPushUrl={`${APP_DASHBOARD}/reports`}
           buttonText="Show More"
         />
@@ -76,13 +78,13 @@ export default async function AppDashboardPage() {
         {activitiesPlain.map((x: IActivityWithID) => <ActivityItem key={x._id} data={x} /> )}
         <Button
           sx={{ mt: 2 }}
-          href={`${APP_DASHBOARD}/activities`}
+          href={`${APP_DASHBOARD}/activity`}
         >
           Show more
         </Button>
       </Box>
     
 
-    </Box>
+    </AppDashboardWrapper>
   );
 }

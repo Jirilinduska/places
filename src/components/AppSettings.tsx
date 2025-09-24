@@ -9,12 +9,13 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { uploadAdminProfileBgImage } from "@/app/actions"
 import { useAuth } from "@clerk/nextjs"
 import { useSnackbar } from "notistack"
+import { AppDashboardWrapper } from "./AppDashboardWrapper"
 
 type Props = {
     appSettings: IAppSettings
 }
 
-export const AppSettingsWrapper = ({ appSettings } : Props) => {
+export const AppSettings = ({ appSettings } : Props) => {
 
 
     const { enqueueSnackbar } = useSnackbar()
@@ -65,7 +66,7 @@ export const AppSettingsWrapper = ({ appSettings } : Props) => {
     // }
 
   return (
-    <Box border="1px solid black" width="100%" mx={2} p={2} color="black">
+    <AppDashboardWrapper>
         
         <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
 
@@ -146,18 +147,20 @@ export const AppSettingsWrapper = ({ appSettings } : Props) => {
                                     />
                                 </Box>
 
-                                <IconButton
-                                    // onClick={() => handleDeleteImage(x)}
-                                    loading={state.loading}
-                                    sx={{
-                                    position: "absolute",
-                                    top: -20,
-                                    right: -20,
-                                    zIndex: 10,
-                                    }}
-                                >
-                                    <CancelIcon color="error" />
-                                </IconButton>
+                                {state.wantEditImages &&
+                                    <IconButton
+                                        // onClick={() => handleDeleteImage(x)}
+                                        loading={state.loading}
+                                        sx={{
+                                        position: "absolute",
+                                        top: -20,
+                                        right: -20,
+                                        zIndex: 10,
+                                        }}
+                                    >
+                                        <CancelIcon color="error" />
+                                    </IconButton>
+                                }
                             </Box>
 
                         ))}
@@ -167,6 +170,6 @@ export const AppSettingsWrapper = ({ appSettings } : Props) => {
             }
         </Box>
 
-    </Box>
+    </AppDashboardWrapper>
 )
 }

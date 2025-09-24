@@ -7,15 +7,17 @@ import ImageIcon from '@mui/icons-material/Image';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useRouter } from "next/navigation"
 
 const navItems = [
   { id: 1, title: "App Dashboard", icon: <DashboardIcon/>, navPath: "/app-dashboard" },
   { id: 2, title: "Users", icon: <GroupIcon/>, navPath: "/app-dashboard/users" },
   { id: 3, title: "Posts", icon: <ImageIcon/>, navPath: "/app-dashboard/posts" },
-  { id: 4, title: "Reports", icon: <ReportProblemIcon />, navPath: "/app-dashboard/reports" },
-  { id: 5, title: "Error Logs", icon: <ErrorOutlineIcon/>, navPath: "/app-dashboard/errors" },
-  { id: 6, title: "App Settings", icon: <SettingsApplicationsIcon/>, navPath: "/app-dashboard/settings" },
+  { id: 4, title: "Activity", icon: <AccessTimeIcon/>, navPath: "/app-dashboard/activity" },
+  { id: 5, title: "Reports", icon: <ReportProblemIcon />, navPath: "/app-dashboard/reports" },
+  { id: 6, title: "Error Logs", icon: <ErrorOutlineIcon/>, navPath: "/app-dashboard/errors" },
+  { id: 7, title: "App Settings", icon: <SettingsApplicationsIcon/>, navPath: "/app-dashboard/settings" },
 ]
 
 export default function AppDashboardNav() {

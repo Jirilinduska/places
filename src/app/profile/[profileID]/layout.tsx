@@ -1,8 +1,8 @@
-import { Box, Typography } from "@mui/material"
-import { isContentMine } from "@/helpers/isContentMine"
+import { Box } from "@mui/material"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { ProfileNavigation } from "@/components/ProfileNavigation"
-import { ModalChangeProfileBg } from "@/components/ModalChangeProfileBg"
+import { getProfileBackgrounds, getUserFromMongo } from "@/app/actions"
+import { ProfileHeader } from "@/components/ProfileHeader"
 
 type Props = {
     children: React.ReactNode
@@ -14,38 +14,38 @@ export default async function ProfileLayout({ children, params } : Props) {
     const { profileID } = await params
     const { userId } = await auth()
 
+    let bgImages: string[] = []
+
     if(!userId) {
         return // TODO
     }
 
     const client = clerkClient()
     const user = (await client).users.getUser(profileID)
+    const userMongo = getUserFromMongo(userId)
+
+    const result = await getProfileBackgrounds()
+    if(result) {
+        bgImages = result.images
+    }
 
     const userData = {
         username: (await user).username,
-        imageUrl: (await user).imageUrl
+        imageUrl: (await user).imageUrl,
+        bgImg: (await userMongo).profileBG
     }
 
     return (
         <Box bgcolor="white" minHeight="100vh" pb={20}>
 
-            <Box height="350px" bgcolor="blue" position="relative" display="flex" alignItems="center" justifyContent="center">
-
-                <Box width={200} height={200}>
-                    <img
-                        src={userData.imageUrl}
-                        alt={userData.username || `user_${profileID}`}
-                        className="w-full h-full rounded-full"
-                    />
-                    <Typography textAlign="center" fontWeight={600} fontSize="20px" my={2}>@{userData.username}</Typography>
-                </Box>
-
-                {isContentMine(userId, profileID) && (
-                    <Box className="cursor-pointer absolute bottom-4 right-4">
-                        <ModalChangeProfileBg userId={userId} />
-                    </Box>
-                )}
-            </Box>
+            <ProfileHeader 
+                backgroundImg={userData.bgImg}
+                profileID={profileID}
+                profileImg={userData.imageUrl}
+                userID={userId}
+                username={userData.username || ""}
+                appBgImages={bgImages}
+            />
 
             <ProfileNavigation 
                 profileID={profileID}
