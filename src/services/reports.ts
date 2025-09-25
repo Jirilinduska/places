@@ -55,13 +55,9 @@ export async function createReportService(postID: string, reason: ReportReason, 
 
 export async function resolveReportService(reportID: string, resolved: ResolveReport, solvedComment: string) {
     const { userId } = await auth()
-    if(!userId) return // TODO 
+    if(!userId) return { success: false, errMsg: "Unauthorized" }
 
     try {
-        const { isAdmin } = await getUserFromMongo(userId)
-        if(!isAdmin) {
-            return { success: false, errMsg: "You cannot do that" }
-        }
         const report = await Report.findById(reportID)
         if(!report) return { success: false, errMsg: "Report not found" }
         if(resolved === "delete_post") {

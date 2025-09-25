@@ -5,9 +5,7 @@ import { AppSettings } from "@/components/AppSettings"
 
 export default async function AppDashboardSettingsPage() {
 
-    const { userId } = await auth()
-    if(!userId) return // TODO 
-    const { appSettings, errMsg } = await getAdminAppSettings(userId)
+    const { appSettings, errMsg } = await getAdminAppSettings()
 
     if(errMsg) {
         return (

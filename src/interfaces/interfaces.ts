@@ -91,6 +91,7 @@ export interface IUserMongo {
     userIDClerk: string
     profileBgImg: string
     isAdmin: boolean
+    isBanned: boolean
 }
 
 export type ActitivyReason = 
@@ -119,7 +120,7 @@ export interface IAppSettings {
     profileBgImages: string[]
 }
 
-export type ClerkUser = {
+export type IClerkUser = {
     id: string
     banned: boolean
     createdAt: number

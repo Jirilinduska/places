@@ -29,7 +29,7 @@ export const ProfileHeader = ({ backgroundImg, profileImg, username, profileID, 
       alignItems="center"
       justifyContent="center"
       sx={{
-        backgroundImage: `url(${currentBG})`,
+        backgroundImage: `url(${backgroundImg})`,
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
         backgroundSize: "cover",
@@ -43,6 +43,7 @@ export const ProfileHeader = ({ backgroundImg, profileImg, username, profileID, 
           alt={username}
           className="w-full h-full rounded-full"
         />
+       {username &&  
         <Typography
           bgcolor="black"
           py={1}
@@ -53,7 +54,7 @@ export const ProfileHeader = ({ backgroundImg, profileImg, username, profileID, 
           my={2}
         >
           @{username}
-        </Typography>
+        </Typography>}
       </Box>
 
       {isContentMine(userID, profileID) && (

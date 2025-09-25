@@ -38,17 +38,19 @@ export const UserItem = ({ username, imgUrl, banned, userIDClerk, lastActiveAt }
                     src={imgUrl || "/images/default_avatar.png"}
                 />
             </Box>
-            <Typography fontWeight={600}>{username}</Typography>
+            <Typography fontWeight={600}>{username || "No Username"}</Typography>
         </Box>
         
-        <Box>
+        <Box display="flex" flexDirection="column" alignItems="flex-end">
             {lastActiveAt &&
-                <Box display="flex" alignItems="center" gap={0.5}>
+                <Box mb={1} display="flex" alignItems="center" gap={0.5}>
                     <Typography fontSize={12}>Last active: </Typography>
                     <TimeAgo date={new Date(lastActiveAt)}/>
                 </Box>
             }
-            {banned && <Tooltip title="Banned"><BlockIcon/></Tooltip>}
+            <Box>
+                {banned && <Tooltip title="Banned"><BlockIcon color="error" fontSize="small"/></Tooltip>}  
+            </Box>
         </Box>
 
     </Box>

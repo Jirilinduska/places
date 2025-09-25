@@ -1,16 +1,9 @@
-import { createActivity, getUserFromMongo } from "@/app/actions"
-import { IAppSettings, ResolveReport } from "@/interfaces/interfaces"
+import { IAppSettings } from "@/interfaces/interfaces"
 import cloudinary from "@/lib/cloudinary"
 import { AppSettings } from "@/models/AppSettings"
-import { Post } from "@/models/Post"
-import { Report } from "@/models/Report"
-import { auth } from "@clerk/nextjs/server"
 
-export async function getAdminAppSettingsService(userId: string) {
 
-    const { isAdmin } = await getUserFromMongo(userId)
-    if(!isAdmin) return { success: false, errMsg: "Not allowed" } 
-
+export async function getAdminAppSettingsService() {
     try {
         let appSettingsDB = await AppSettings.findOne().lean<IAppSettings>()
         if(!appSettingsDB) {
@@ -32,11 +25,7 @@ export async function getAdminAppSettingsService(userId: string) {
     }
 }
 
-export async function uploadAdminProfileBgImageService(userId: string, base64data: string) {
-
-    const { isAdmin } = await getUserFromMongo(userId)
-    if(!isAdmin) return { success: false, errMsg: "Not allowed" } 
-
+export async function uploadAdminProfileBgImageService(base64data: string) {
     try {
         let appSettings = await AppSettings.findOne()
         if(!appSettings) {
@@ -57,8 +46,6 @@ export async function uploadAdminProfileBgImageService(userId: string, base64dat
 }
 
 export async function getProfileBackgroundsService() {
-    const { userId } = await auth()
-    if(!userId) return
     try {
         const appSettings = await AppSettings.findOne()
         return { success: true, images: appSettings.profileBgImages }
