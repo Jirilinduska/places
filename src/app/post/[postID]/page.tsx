@@ -1,4 +1,4 @@
-import { ButtonDelete } from "@/components/ButtonDelete"
+import { ButtonIconDelete } from "@/components/ButtonIconDelete"
 import { ButtonEditPost } from "@/components/ButtonEditPost"
 import { ButtonShare } from "@/components/ButtonShare"
 import { Emoji } from "@/components/Emoji"
@@ -51,7 +51,7 @@ export default async function PostPage({ params } : Props) {
                         <ButtonEditPost
                             postID={postID}
                         />
-                        <ButtonDelete
+                        <ButtonIconDelete
                             deleteID={postID}
                             deleteOperation="delete_post"
                             modalTitle="Delete this post?"

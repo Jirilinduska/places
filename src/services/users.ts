@@ -2,10 +2,16 @@ import { Activity } from "@/models/Activity"
 import { UserMongo } from "@/models/UserMongo"
 import { deleteAllPostsService } from "./posts"
 import { clerkClient } from "@clerk/nextjs/server"
-import { deleteUserImgByAdminService } from "./clerk"
+import { handleError } from "@/helpers/handleError"
+import { connectDB } from "@/lib/mongo"
 
-export async function getUserFromMongoService(userID: string) {
+export type GetUserFromMongoServiceType =
+  | { success: true, profileBG: string, isAdmin: boolean }
+  | { success: false, errMsg: string }
+
+export async function getUserFromMongoService(userID: string) : Promise<GetUserFromMongoServiceType> {
     try {
+        await connectDB()
         let user = await UserMongo.findOne({ userIDClerk: userID })
         if(!user) {
             await UserMongo.create({ userIDClerk: userID, profileBgImg: "", isAdmin: false })
@@ -13,16 +19,23 @@ export async function getUserFromMongoService(userID: string) {
         user = await UserMongo.findOne({ userIDClerk: userID })
         return { success: true, profileBG: user.profileBgImg, isAdmin: user.isAdmin }
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            return { success: false, errMsg: error.message }
-        }
-        return { success: false, errMsg: "Unknown error" }
+        const { errMsg } = await handleError(error, {
+            action: "Get user from mongoDB",
+            component: "getUserFromMongoService()",
+            input: { userID }
+        })
+        return { success: false, errMsg }
     }
     
 }
 
-export async function updateProfileBgService(userID: string, imgUrl: string) {
+export type UpdateProfileBgServiceType =
+  | { success: true }
+  | { success: false, errMsg: string }
+
+export async function updateProfileBgService(userID: string, imgUrl: string) : Promise<UpdateProfileBgServiceType> {
     try {
+        await connectDB()
         let user = await UserMongo.findOne({ userIDClerk: userID })
         if(!user) {
             await UserMongo.create({ userIDClerk: userID, profileBgImg: "", isAdmin: false })
@@ -30,26 +43,35 @@ export async function updateProfileBgService(userID: string, imgUrl: string) {
         }
         user.profileBgImg = imgUrl
         await user.save()
-        return { success: true  }
+        return { success: true }
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            return { success: false, errMsg: error.message }
-        }
-        return { success: false, errMsg: "Unknown error" }
+        const { errMsg } = await handleError(error, {
+            action: "Update profile background image",
+            component: "updateProfileBgService()",
+            input: { userID, imgUrl }
+        })
+        return { success: false, errMsg }
     }
     
 }
+export type DeleteUserForoverServiceType =
+  | { success: true }
+  | { success: false, errMsg: string }
 
-export async function deleteUserForoverService(clerkUserIdToDelete: string) {
+export async function deleteUserForoverService(clerkUserIdToDelete: string) : Promise<DeleteUserForoverServiceType> {
     try {
-
         const client = await clerkClient()
         const userClerk = await client.users.getUser(clerkUserIdToDelete)
-        if(!userClerk) return { success: false, errMsg: "User not found in clerk database" }
+        if(!userClerk) {
+            throw new Error("User not found in clerk database")
+        }
 
+        await connectDB()
 
         const userMongo = await UserMongo.findOne({ userIDClerk: clerkUserIdToDelete })
-        if(!userMongo) return { success: false, errMsg: "User not found in mongo database" }
+        if(!userMongo) {
+            throw new Error("User not found in mongo database")
+        }
 
         // Smazání aktivit
         await Activity.deleteMany({ userID: clerkUserIdToDelete })
@@ -66,10 +88,12 @@ export async function deleteUserForoverService(clerkUserIdToDelete: string) {
 
         return { success: true  }
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            return { success: false, errMsg: error.message }
-        }
-        return { success: false, errMsg: "Unknown error" }
+        const { errMsg } = await handleError(error, {
+            action: "Delete user forever",
+            component: "deleteUserForoverService()",
+            input: { clerkUserIdToDelete }
+        })
+        return { success: false, errMsg }
     }
     
 }

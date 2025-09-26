@@ -44,11 +44,11 @@ export const ReportItem = ({ reportID, createdAt, isSolved, reason, isJustPrevie
             return
         }
         const result = await resolveReport(reportID, resolved, data.solvedComment)
-        if(result?.success) {
+        if(result.success) {
             enqueueSnackbar("Report resolved", { variant: "success" })
             setData((prev) => ({...prev, errMsg: "", solved: true, solvedByUserID: userId }))
         } else {
-            enqueueSnackbar(result?.errMsg, { variant: "error" })
+            enqueueSnackbar(result.errMsg, { variant: "error" })
         }
     }
 

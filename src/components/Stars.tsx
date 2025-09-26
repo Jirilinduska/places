@@ -28,8 +28,10 @@ export const Stars = ({ stars, canClick, setStars, createdByUserID } : Props) =>
     useEffect(() => {
         if(canClick || !createdByUserID || stars === 0) return
         const fetchUser = async() => {
-            const { username } = await getUsernameFromClerk(createdByUserID)
-            if(username) setUserName(username)
+            const result = await getUsernameFromClerk(createdByUserID)
+            if(result.success) {
+                setUserName(result.username)
+            }
         }
         fetchUser()
     }, [])

@@ -2,7 +2,7 @@
 
 import { IPost } from "@/interfaces/interfaces"
 import { Box, Button, Divider, IconButton, TextField, Typography } from "@mui/material"
-import { ButtonDelete } from "./ButtonDelete"
+import { ButtonIconDelete } from "./ButtonIconDelete"
 import { useState } from "react"
 import { PostLocation } from "./PostLocation"
 import { SelectTripDate } from "./SelectTripDate"
@@ -86,7 +86,6 @@ export const EditPost = ({ data } : { data: IPost }) => {
 
 
     const handleSubmit = async() => {
-        console.log("Click")
         if(!post.placeTitle) {
             setState((prev) => ({...prev, error: "placeTitle"}))
             return
@@ -95,20 +94,15 @@ export const EditPost = ({ data } : { data: IPost }) => {
             setState((prev) => ({...prev, error: "placeName"}))
             return
         }
-        try {
-            setState((prev) => ({...prev, loading: true}))
-            const { success, errMsg } = await UpdatePost(post)
-            if(success) {
-                enqueueSnackbar("Post saved", { variant: "success" })
-                router.push(`/post/${post._id}`)
-            } else {
-                enqueueSnackbar(errMsg, { variant: "error" })
-            }
-        } catch (error) {
-            enqueueSnackbar("Something went wrong", { variant: "error" })
-        } finally {
-            setState((prev) => ({...prev, loading: false}))
+        setState((prev) => ({...prev, loading: true}))
+        const result = await UpdatePost(post)
+        if(result.success) {
+            enqueueSnackbar("Post saved", { variant: "success" })
+            router.push(`/post/${post._id}`)
+        } else {
+            enqueueSnackbar(result.errMsg, { variant: "error" })
         }
+        setState((prev) => ({...prev, loading: false}))
     }
 
   return (
@@ -118,7 +112,7 @@ export const EditPost = ({ data } : { data: IPost }) => {
 
             <Box mb={2} display="flex" alignItems="center" justifyContent="end" gap={1}>
                 <Box display="flex" alignItems="center" gap={2}>
-                    <ButtonDelete
+                    <ButtonIconDelete
                         deleteID={data._id}
                         deleteOperation="delete_post"
                         modalTitle="Delete this post?"

@@ -5,6 +5,7 @@ import { Box, Button } from "@mui/material"
 import { useState } from "react"
 import { ActivityItem } from "./ActivityItem"
 import { getActivities } from "@/app/actions"
+import { useSnackbar } from "notistack"
 
 type Props = {
     initialActivity: IActivityWithID[]
@@ -12,6 +13,7 @@ type Props = {
 
 export const ActivityList = ({ initialActivity } : Props) => {
 
+    const { enqueueSnackbar } = useSnackbar()
     const [activity, SetActivity] = useState(initialActivity)
     const [skip, setSkip] = useState(initialActivity.length)
     const [loading, setLoading] = useState(false)
@@ -20,6 +22,12 @@ export const ActivityList = ({ initialActivity } : Props) => {
     const handleShowMore = async () => {
         setLoading(true)
         const result = await getActivities(5, skip)
+        if(!result.success) {
+            setLoading(false)
+            enqueueSnackbar(result.errMsg, { variant: "error" })
+            return
+        }
+
         if(result.success) {
             if (result.activities?.length === 0) {
                 setLoading(false)

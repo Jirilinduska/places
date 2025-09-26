@@ -12,8 +12,9 @@ export default async function AppDashboardLayout({ children } : Props ) {
 
     const { userId } = await auth()
     if(!userId) return notFound() // TODO
-    const { success, errMsg, isAdmin } = await getUserFromMongo(userId)
-    if(!isAdmin) return notFound() // TODO
+    const result = await getUserFromMongo(userId)
+    if(!result.success) return notFound() // TODO
+    if(!result.isAdmin) return notFound() // TODO
 
   return (
     <Box bgcolor="white" minHeight="100vh" py={16}>

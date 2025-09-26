@@ -54,17 +54,18 @@ export const ModalChangeUserData = ({ username, profileImg, toggleChange } : Pro
     const handleSubmit = async() => {
         if(!user) return
         if(username) {
-            const { errMsg } = await changeUsernameClerk(user.id, userData.username)
-            if(errMsg) {
-                enqueueSnackbar(errMsg, { variant: "error" })
+            const result = await changeUsernameClerk(user.id, userData.username)
+            if(result.success) {
+                enqueueSnackbar("Username updated", { variant: "success" })
+                changeModalState("isChange", false)
+                changeModalState("open", false)
+                if(toggleChange) {
+                    toggleChange()
+                } 
+            } else {
+                enqueueSnackbar(result.errMsg, { variant: "error" })
                 return  
             }
-            if(toggleChange) {
-                toggleChange()
-            } 
-            enqueueSnackbar("Username updated", { variant: "success" })
-            changeModalState("isChange", false)
-            changeModalState("open", false)
         }
     }
 

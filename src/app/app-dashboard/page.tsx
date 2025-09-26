@@ -11,6 +11,7 @@ import FeedIcon from '@mui/icons-material/Feed';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { AppDashboardWrapper } from "@/components/AppDashboardWrapper"
+import { ErrorLog } from "@/models/ErrorLog"
 
 const APP_DASHBOARD = "/app-dashboard"
 
@@ -21,6 +22,8 @@ export default async function AppDashboardPage() {
   const postsCount = (await Post.find()).length
   const totalReportsCount = (await Report.find()).length
   const unresolvedReportsCount = (await Report.find({ isSolved: false })).length
+  const totalErrorsCount = (await ErrorLog.find()).length
+  const unsolvedErrorsCount = (await ErrorLog.find({ isSolved: false })).length
 
   const activities = await Activity.find().lean<IActivityWithID[]>().limit(3).sort({ createdAt: -1 })
   const activitiesPlain = activities.map(x => ({
@@ -64,9 +67,9 @@ export default async function AppDashboardPage() {
 
         <AppDashboardItem 
           icon={<ErrorOutlineIcon />}
-          mainTitle={"XYZ"}
+          mainTitle={`${unsolvedErrorsCount} / ${totalErrorsCount}`}
           subTitle="Error Logs"
-          routerPushUrl={`${APP_DASHBOARD}/error-logs`}
+          routerPushUrl={`${APP_DASHBOARD}/errors`}
           buttonText="Show More"
         />
       

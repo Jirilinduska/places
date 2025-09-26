@@ -15,7 +15,7 @@ type Props = {
     deleteOperation: "delete_post" | "delete_report"
 }
 
-export const ButtonDelete = ({ tooltipBtn, modalTitle, deleteID, deleteOperation } : Props ) => {
+export const ButtonIconDelete = ({ tooltipBtn, modalTitle, deleteID, deleteOperation } : Props ) => {
 
     const { enqueueSnackbar } = useSnackbar()
     const router = useRouter()

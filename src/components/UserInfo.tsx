@@ -1,15 +1,16 @@
 "use client";
 
-import { Box, Button, Typography } from "@mui/material"
+import { Box, Divider, Typography } from "@mui/material"
 import { useState } from "react"
 import { ButtonBanUser } from "./ButtonBanUser"
 import { useSnackbar } from "notistack"
 import { IClerkUser } from "@/interfaces/interfaces"
 import { TimeAgo } from "./TimeAgo"
 import BlockIcon from '@mui/icons-material/Block';
-import { clerkClient } from "@clerk/nextjs/server"
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { deleteUserByAdmin, deleteUserImgByAdmin } from "@/app/actions"
 import { useRouter } from "next/navigation"
+import { ButtonWithModal } from "./ButtonWithModal"
 
 type Props = {
     userData: IClerkUser
@@ -23,30 +24,33 @@ export const UserInfo = ({ userData } : Props) => {
     const router = useRouter()
 
     const [user, setUser] = useState<IClerkUser>(userData)
+    const [loading, setLoading] = useState(false)
 
     const handleSetBan = (newValue: boolean) => {
         setUser((prev) => ({...prev, banned: newValue}))
     }
 
-    // TODO - obalit button do component a přidat modal are you sure :)
-
     const handleDeleteImage = async() => {
+        setLoading(true)
         const result = await deleteUserImgByAdmin(user.id)
-        if(result?.success) {
+        if(result.success) {
             setUser((prev) => ({...prev, imageUrl: ""}))
         } else {
-            enqueueSnackbar(result?.errMsg, { variant: "error" })
+            enqueueSnackbar(result.errMsg, { variant: "error" })
         }
+        setLoading(false)
     }
 
     const handleDeleteUser = async() => {
+        setLoading(true)
         const result = await deleteUserByAdmin(user.id)
-        if(result?.success) {
+        if(result.success) {
             enqueueSnackbar("User deleted", { variant: "success" })
             router.push("/app-dashboard/users")
         } else {
-            enqueueSnackbar(result?.errMsg, { variant: "error" })
+            enqueueSnackbar(result.errMsg, { variant: "error" })
         }
+        setLoading(false)
     }
 
   return (
@@ -69,52 +73,68 @@ export const UserInfo = ({ userData } : Props) => {
         </Box>
 
         <Box mb={4}>
-            <Box display="flex" alignItems="center" mb={1}>
+            <Box display="flex" alignItems="center">
                 <Typography width={ITEM_WIDTH}>Status:</Typography>
                 <Typography color={user.banned ? "error" : "success"}>{user.banned ? "Banned" : "Active"}</Typography>
             </Box>
-            <Box display="flex" alignItems="center" mb={1}>
+
+            <Divider sx={{ my: 1 }} />
+
+            <Box display="flex" alignItems="center">
                 <Typography width={ITEM_WIDTH}>First name:</Typography>
                 <Typography>{user.firstName}</Typography>
             </Box>
-            <Box display="flex" alignItems="center" mb={1}>
+
+            <Divider sx={{ my: 1 }} />
+
+            <Box display="flex" alignItems="center">
                 <Typography width={ITEM_WIDTH}>Last name:</Typography>
                 <Typography>{user.lastName}</Typography>
             </Box>
-            <Box display="flex" alignItems="center" mb={1}>
+
+            <Divider sx={{ my: 1 }} />
+
+            <Box display="flex" alignItems="center">
                 <Typography width={ITEM_WIDTH}>Created:</Typography>
                 {user.createdAt && <TimeAgo date={new Date(user.createdAt)}/>}
             </Box>
-            <Box display="flex" alignItems="center" mb={1}>
+
+            <Divider sx={{ my: 1 }} />
+
+            <Box display="flex" alignItems="center">
                 <Typography width={ITEM_WIDTH}>Last active:</Typography>
                 {user.lastActiveAt && <TimeAgo date={new Date(user.lastActiveAt)}/>}
             </Box>
-            <Box display="flex" alignItems="center" mb={1}>
+
+            <Divider sx={{ my: 1 }} />
+
+            <Box display="flex" alignItems="center">
                 <Typography width={ITEM_WIDTH}>Last sign in:</Typography>
                 {user.lastSignInAt && <TimeAgo date={new Date(user.lastSignInAt)}/>}
             </Box>
+
+            <Divider sx={{ my: 1 }} />
         </Box>
 
         <Box display="flex" alignItems="center" gap={2}>
 
-            <Button
+            <ButtonWithModal 
+                btnTitle="Delete profile image"
+                modalTitle="Delete user's profile image?"
+                onDelete={handleDeleteImage}
+                loading={loading}
+                icon={<DeleteForeverIcon/>}
                 color="error"
-                variant="contained"
-                size="small"
-                onClick={handleDeleteImage}
-            >
-                Delete profile image
-            </Button>
+            />
 
-            <Button
+            <ButtonWithModal 
+                btnTitle="Delete user"
+                modalTitle="Delete user?"
+                onDelete={handleDeleteUser}
+                loading={loading}
+                icon={<BlockIcon/>}
                 color="error"
-                variant="contained"
-                size="small"
-                onClick={handleDeleteUser}
-                startIcon={<BlockIcon/>}
-            >
-                Delete user
-            </Button>
+            />
 
         </Box>
     </Box>

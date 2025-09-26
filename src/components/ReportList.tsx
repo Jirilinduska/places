@@ -1,17 +1,10 @@
 "use client";
 
-import { IReport, ReportReason } from "@/interfaces/interfaces"
+import { IReport } from "@/interfaces/interfaces"
 import { Box, Button } from "@mui/material"
 import { useState } from "react"
 import { ReportItem } from "./ReportItem"
 import { getReports } from "@/app/actions"
-
-type InitialReport = {
-    _id: string,
-    reason: ReportReason,
-    isSolved: boolean,
-    createdAt: string
-}
 
 type Props = {
     initialReports: IReport[]

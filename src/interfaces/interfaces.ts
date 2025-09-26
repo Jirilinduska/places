@@ -131,3 +131,19 @@ export type IClerkUser = {
     lastName: string | null
     lastActiveAt: number | null
 }
+
+export interface IErrorLog {
+    _id?: string
+    message: string
+    context: {
+        route?: string
+        component?: string
+        action?: string
+        userID?: string
+        input?: any
+        url?: string
+    };
+    env: string
+    createdAt: Date
+    isSolved: boolean
+}

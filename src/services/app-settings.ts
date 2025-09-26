@@ -1,10 +1,17 @@
+import { handleError } from "@/helpers/handleError"
 import { IAppSettings } from "@/interfaces/interfaces"
 import cloudinary from "@/lib/cloudinary"
+import { connectDB } from "@/lib/mongo"
 import { AppSettings } from "@/models/AppSettings"
 
 
-export async function getAdminAppSettingsService() {
+export type GetAdminAppSettingsServiceType =
+  | { success: true, appSettings: IAppSettings }
+  | { success: false, errMsg: string }
+
+export async function getAdminAppSettingsService() : Promise<GetAdminAppSettingsServiceType> {
     try {
+        await connectDB()
         let appSettingsDB = await AppSettings.findOne().lean<IAppSettings>()
         if(!appSettingsDB) {
             const created = await AppSettings.create({})
@@ -18,41 +25,51 @@ export async function getAdminAppSettingsService() {
 
         return { success: true, appSettings }
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            return { success: false, errMsg: error.message }
-        }
-        return { success: false, errMsg: "Unknown error" }
+        const { errMsg } = await handleError(error,{
+            action: "Get Admin Settings Data",
+            component: "getAdminAppSettingsService()"
+        })
+        return { success: false, errMsg }
     }
 }
 
-export async function uploadAdminProfileBgImageService(base64data: string) {
-    try {
-        let appSettings = await AppSettings.findOne()
-        if(!appSettings) {
-            appSettings = await AppSettings.create({})
-        }
+export type UploadAdminProfileBgImageServiceType =
+  | { success: true, imgUrl: string }
+  | { success: false, errMsg: string }
 
+export async function uploadAdminProfileBgImageService(base64data: string) : Promise<UploadAdminProfileBgImageServiceType> {
+    try {
+        await connectDB()
+        let appSettings = await AppSettings.findOne()
         const uploaded = await cloudinary.uploader.upload(base64data)
         const imgUrl = uploaded.secure_url 
         appSettings?.profileBgImages.push(imgUrl)
         await appSettings.save()
         return { success: true, imgUrl }
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            return { success: false, errMsg: error.message }
-        }
-        return { success: false, errMsg: "Unknown error" }
+        const { errMsg } = await handleError(error, {
+            action: "Upload new profile bg by admin",
+            component: "uploadAdminProfileBgImageService()",
+            input: { base64data }
+        })
+        return { success: false, errMsg }
     }
 }
 
-export async function getProfileBackgroundsService() {
+export type GetProfileBackgroundsServiceType =
+  | { success: true, images: string[] }
+  | { success: false, errMsg: string }
+
+export async function getProfileBackgroundsService() : Promise<GetProfileBackgroundsServiceType> {
     try {
+        await connectDB()
         const appSettings = await AppSettings.findOne()
         return { success: true, images: appSettings.profileBgImages }
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            return { success: false, errMsg: error.message }
-        }
-        return { success: false, errMsg: "Unknown error" }
+        const { errMsg } = await handleError(error, {
+            action: "Get profile background",
+            component: "getProfileBackgroundsService()"
+        })
+        return { success: false, errMsg }
     }
 }

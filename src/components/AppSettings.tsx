@@ -38,12 +38,12 @@ export const AppSettings = ({ appSettings } : Props) => {
         reader.onloadend = async () => {
         const base64data = reader.result as string
         try {
-            const { success, errMsg, imgUrl } = await uploadAdminProfileBgImage(userId, base64data)
-            if(success) {
-                setData(prev => ({ ...prev, images: [...prev.profileBgImages, imgUrl] }))
+            const result= await uploadAdminProfileBgImage(base64data)
+            if(result.success) {
+                setData(prev => ({ ...prev, images: [...prev.profileBgImages, result.imgUrl] }))
                 enqueueSnackbar("Image uploaded", { variant: "success" })
             } else {
-                enqueueSnackbar(errMsg, { variant: "error" })
+                enqueueSnackbar(result.errMsg, { variant: "error" })
             }
         } catch (err) {
             console.error(err)

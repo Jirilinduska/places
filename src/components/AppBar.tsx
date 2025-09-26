@@ -18,8 +18,10 @@ export const AppBar = () => {
     useEffect(() => {
         const fetchData = async() => {
             if(!userId || !isSignedIn) return
-            const { isAdmin, success } = await getUserFromMongo(userId)
-            if(success) setIsAdmin(isAdmin)
+            const result = await getUserFromMongo(userId)
+            if(result.success) {
+                setIsAdmin(result.isAdmin)
+            }
         }
         fetchData()
     }, [])

@@ -42,13 +42,13 @@ export const ModalChangeProfileBg = ({ userId, bgImages, currentBG, handleSetCur
 
     const handleSubmit = async() => {
         handleChange("loading", true)
-        const { success, errMsg } = await updateProfileBg(userId, state.isSelected)
-        if(success) {
+        const result = await updateProfileBg(userId, state.isSelected)
+        if(result.success) {
             enqueueSnackbar("Image updated", { variant: "success" })
             handleSetCurrentBG(state.isSelected)
             handleChange("open", false)
         } else {
-            enqueueSnackbar(errMsg, { variant: "error" })
+            enqueueSnackbar(result.errMsg, { variant: "error" })
         }
         handleChange("loading", false)
     }

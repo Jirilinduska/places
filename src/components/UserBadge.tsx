@@ -28,9 +28,11 @@ export const UserBadge = ({ userID, showLocation, lat, lon, placeName, county, m
     useEffect(() => {
       const fetchUser = async() => {
         setLoading(true)
-        const { imageUrl, username } = await getUserFromClerk(userID)
-        setUserData({ username: username || "user", imageUrl })
-        setLoading(false)
+        const result = await getUserFromClerk(userID)
+        if(result.success) {
+            setUserData({ username: result.username || "user", imageUrl: result.imageUrl })
+            setLoading(false)
+        }
       }
       fetchUser()
     }, [])

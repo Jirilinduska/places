@@ -5,19 +5,13 @@ import { AppSettings } from "@/components/AppSettings"
 
 export default async function AppDashboardSettingsPage() {
 
-    const { appSettings, errMsg } = await getAdminAppSettings()
+    const result = await getAdminAppSettings()
 
-    if(errMsg) {
-        return (
-            <Box border="1px solid black" width="100%" mx={2} p={2} color="black">
-                <Typography>{errMsg}</Typography>
-            </Box>
-        )
-    }
+    if(result.success) return <AppSettings appSettings={result.appSettings} />
 
-    if(appSettings) {
-        return <AppSettings appSettings={appSettings} />
-    }
-
-    return null
+    return (
+        <Box border="1px solid black" width="100%" mx={2} p={2} color="black">
+            <Typography>{result.errMsg}</Typography>
+        </Box>
+    )
 }

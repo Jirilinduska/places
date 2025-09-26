@@ -15,6 +15,7 @@ export default async function ProfileLayout({ children, params } : Props) {
     const { userId } = await auth()
 
     let bgImages: string[] = []
+    let userProfileBG: string = ""
 
     if(!userId) {
         return // TODO
@@ -22,17 +23,20 @@ export default async function ProfileLayout({ children, params } : Props) {
 
     const client = clerkClient()
     const user = (await client).users.getUser(profileID)
-    const userMongo = getUserFromMongo(userId)
+    const userMongoResult = await getUserFromMongo(userId)
+    if(userMongoResult.success) {
+        userProfileBG = userMongoResult.profileBG
+    }
 
     const result = await getProfileBackgrounds()
-    if(result) {
+    if(result.success) {
         bgImages = result.images
     }
 
     const userData = {
         username: (await user).username,
         imageUrl: (await user).imageUrl,
-        bgImg: (await userMongo).profileBG
+        bgImg: userProfileBG
     }
 
     return (

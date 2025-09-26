@@ -25,14 +25,8 @@ export async function POST(req: NextRequest) {
         })
 
         await Reactions.create({ postID: newPost._id })
-        
-        const { success, errMsg } = await createActivity(userId, "upload_post", "", newPost._id)
-
-        if(success) {
-            return NextResponse.json({ success: true }, { status: 201 })
-        } else {
-            return NextResponse.json({ success: false, error: errMsg }, { status: 500 })
-        }
+        await createActivity(userId, "upload_post", "", newPost._id)
+        return NextResponse.json({ success: true }, { status: 201 })
 
     } catch (error) {
         console.log(error)
