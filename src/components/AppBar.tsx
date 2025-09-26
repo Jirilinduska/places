@@ -2,8 +2,7 @@
 
 import { Box, Typography } from "@mui/material";
 import Link from "next/link"
-import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
-import { SignedIn, useAuth } from "@clerk/nextjs"
+import { useAuth } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import { getUserFromMongo } from "@/app/actions"
 import { UserBadge } from "./UserBadge"
