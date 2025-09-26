@@ -7,7 +7,7 @@ export async function handleError(
       action?: string
       component?: string
       userID?: string
-      input?: any
+      input?: { [key: string]: unknown } | string
       url?: string
     }
   ) {

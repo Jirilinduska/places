@@ -19,7 +19,7 @@ type Props = {
     component?: string;
     action?: string;
     userID?: string;
-    input?: any;
+    input?: { [key: string]: unknown } | string
     url?: string;
     env: string;
     createdAt: Date;
@@ -159,12 +159,11 @@ export const ErrorLogItem = ({ _id, createdAt, env, message, action, component, 
       <Divider sx={{ my: 1 }} />
 
       <Box display="flex" alignItems="center">
-        <Typography width={ITEM_WIDHT} fontWeight={600}>
-          Input:
-        </Typography>
         <Typography>
           {input
-            ? JSON.stringify(input, null, 2)
+            ? typeof input === "string"
+              ? input
+              : JSON.stringify(input, null, 2)
             : "{}"}
         </Typography>
       </Box>

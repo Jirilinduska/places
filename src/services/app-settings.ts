@@ -40,10 +40,10 @@ export type UploadAdminProfileBgImageServiceType =
 export async function uploadAdminProfileBgImageService(base64data: string) : Promise<UploadAdminProfileBgImageServiceType> {
     try {
         await connectDB()
-        let appSettings = await AppSettings.findOne()
+        const appSettings = await AppSettings.findOne()
         const uploaded = await cloudinary.uploader.upload(base64data)
         const imgUrl = uploaded.secure_url 
-        appSettings?.profileBgImages.push(imgUrl)
+        appSettings.profileBgImages.push(imgUrl)
         await appSettings.save()
         return { success: true, imgUrl }
     } catch (error: unknown) {
