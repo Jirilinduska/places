@@ -14,7 +14,7 @@ export async function logErrorService({
       component?: string
       action?: string
       userID?: string
-      input?: any
+      input?: { [key: string]: unknown } | string
       url?: string
     }
     env?: string
