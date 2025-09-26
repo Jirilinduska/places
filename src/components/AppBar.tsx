@@ -2,7 +2,6 @@
 
 import { Box, Typography } from "@mui/material";
 import Link from "next/link"
-import FeedIcon from '@mui/icons-material/Feed';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import { SignedIn, useAuth } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
@@ -42,7 +41,6 @@ export const AppBar = () => {
         zIndex={100}
     >
 
-        {/* // TODO - tady logo */}
         <Box>
             <Link href="/" className="flex items-center gap-2">
                 <img 
@@ -56,23 +54,7 @@ export const AppBar = () => {
             </Link>
         </Box>
 
-        <AppNavigation />
-
-        <SignedIn>
-            <Box display="flex" alignItems="center" gap={2}>
-                {/* <Link href="/feed" className="flex flex-col items-center gap-1">
-                    <FeedIcon />
-                    <Typography fontSize="12px">Feed</Typography>
-                </Link> */}
-                {isAdmin && 
-                    <Link href={`/app-dashboard`} className="flex flex-col items-center gap-1 ml-6 text-red-400">
-                        <PermContactCalendarIcon />
-                    <Typography fontSize="12px">Admin Panel</Typography>
-                </Link>
-                }
-            </Box>
-        </SignedIn>
-
+        {isSignedIn && <AppNavigation />}
         {userId && <UserBadge userID={userId} />}
 
 
