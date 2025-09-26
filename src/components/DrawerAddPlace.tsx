@@ -1,7 +1,6 @@
 "use client";
 
 import { Drawer, Box, TextField, Button, Typography, Tooltip, IconButton } from "@mui/material";
-import { AppMap } from "./AppMap"
 import { Stars } from "./Stars"
 import CancelIcon from '@mui/icons-material/Cancel';
 import { SearchInput } from "./SearchInput"
@@ -11,6 +10,13 @@ import { useAddNewPost } from "@/hooks/useAddNewPost"
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
 import { useState } from "react"
+
+import type { AppMapProps } from "./AppMap"
+import dynamic from "next/dynamic"
+const AppMap = dynamic<AppMapProps>(
+    () => import("./AppMap").then((mod) => mod.AppMap),
+    { ssr: false }
+)
 
 
 type Props = {

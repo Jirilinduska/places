@@ -5,7 +5,12 @@
 import { Box, Modal, Tooltip, Typography } from "@mui/material"
 import PlaceIcon from '@mui/icons-material/Place';
 import { useState } from "react"
-import { AppMap } from "./AppMap"
+import dynamic from "next/dynamic"
+import type { AppMapProps } from "./AppMap"
+const AppMap = dynamic<AppMapProps>(
+    () => import("./AppMap").then((mod) => mod.AppMap),
+    { ssr: false }
+)
 
 const style = {
     position: 'absolute',
