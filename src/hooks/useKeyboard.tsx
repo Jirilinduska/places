@@ -3,6 +3,7 @@ import { useEffect } from "react"
 export const useKeyboard = (open: boolean, setImgIndex: React.Dispatch<React.SetStateAction<number>>) => {
     useEffect(() => {
       const keyDown = (e: KeyboardEvent) => {
+        if (typeof window === "undefined") return
         if (!open) return
         if (e.key === "ArrowRight") {
           setImgIndex(1)
