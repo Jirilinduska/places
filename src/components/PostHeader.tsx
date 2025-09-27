@@ -30,9 +30,9 @@ export const PostHeader = ({ data, onDelete, loading } : Props) => {
             placeName={data.placeName}
         />
 
-        <Box display="flex" alignItems="center" gap={0}>
+        <Box display="flex" alignItems="center">
         
-            <Box mr={2}>
+            <Box mr={2} display={{ xs: "none", sm: "block" }}>
                 <TimeAgo date={data.createdAt} />
             </Box>
         

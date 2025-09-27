@@ -17,7 +17,6 @@ type Props = {
 }
 
 export const Post = ({ data } : Props) => {
-
   const { enqueueSnackbar } = useSnackbar()
   const [isDeleted, setIsDeleted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -40,32 +39,44 @@ export const Post = ({ data } : Props) => {
     <Box  
       border="1px solid black" 
       width={{ xs: "95%", md: "75%", lg: "50%" }}
-      mb={10}
-      height={data.images.length === 0 ? "250px" : "auto"}
-      p={2}
+      mb={4}
+      p={0}
       borderRadius={borderRadius}
       color="black"
     >
+      <Box p={2}>
+        <PostHeader
+          data={data} 
+          onDelete={handleDeletePost}
+          loading={loading}
+        />
+      </Box>
 
-      <PostHeader
-        data={data} 
-        onDelete={handleDeletePost}
-        loading={loading}
-      />
+      <Box px={2}> 
+        <TripDate tripDate={data.tripDate}/>
+      </Box>
 
-      <TripDate tripDate={data.tripDate}/>
-
-      <Typography my={2} fontWeight={600}>{data.placeTitle}</Typography>
+      <Box px={2}>
+        <Typography my={2} fontWeight={600}>{data.placeTitle}</Typography>
+      </Box>
 
       {data.images.length > 0 && <PostImages images={data.images} height="400px" /> }
 
       {data.note && (
-        <Typography my={2}>{data.note}</Typography>
+        <Box px={2}>
+          <Typography my={2}>{data.note}</Typography>
+        </Box>
       )}
 
-      {data.stars > 0 && <Stars stars={data.stars} createdByUserID={data.userID} /> }
+      {data.stars > 0 && (
+        <Box mb={1} px={2}>
+          <Stars stars={data.stars} createdByUserID={data.userID} /> 
+        </Box>
+      )}
 
-      <Emoji postID={data._id} />
+      <Box px={2}>
+        <Emoji postID={data._id} />
+      </Box>
 
     </Box>
   );
