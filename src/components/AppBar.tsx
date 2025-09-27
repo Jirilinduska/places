@@ -3,26 +3,35 @@
 import { Box, Typography } from "@mui/material";
 import Link from "next/link"
 import { useAuth } from "@clerk/nextjs"
-import { useEffect, useState } from "react"
-import { getUserFromMongo } from "@/app/actions"
 import { UserBadge } from "./UserBadge"
 import { AppNavigation } from "./AppNavigation"
+import { useEffect, useState } from "react"
+import { DrawerUserMenu } from "./DrawerUserMenu"
+import { getUserFromMongo } from "@/app/actions"
+import MenuIcon from '@mui/icons-material/Menu';
 
 export const AppBar = () => {
 
     const { userId, isSignedIn } = useAuth()
-    const [isAdmin, setIsAdmin] = useState<boolean>(false)
+    const [openMenu, setOpenMenu] = useState(false)
+    const [admin, setAdmin] = useState(false)
+
+    const toggleOpen = () => setOpenMenu(prev => !prev)
 
     useEffect(() => {
-        const fetchData = async() => {
-            if(!userId || !isSignedIn) return
+    
+        const fetchUser = async() => {
+            if(!userId) return
             const result = await getUserFromMongo(userId)
             if(result.success) {
-                setIsAdmin(result.isAdmin)
+                setAdmin(result.isAdmin)
             }
         }
-        fetchData()
-    }, [])
+
+        fetchUser()
+    }, [userId])
+
+    if(!isSignedIn) return null
 
   return (
     <Box
@@ -53,10 +62,25 @@ export const AppBar = () => {
             </Link>
         </Box>
 
-        {isSignedIn && <AppNavigation />}
-        {userId && <UserBadge userID={userId} />}
+        <AppNavigation />
 
+        {userId && 
+            <Box onClick={toggleOpen}>
+                <Box display={{ xs: "none", sm: "block" }}>
+                    <UserBadge userID={userId} hideLink />
+                </Box>
+                <Box display={{ xs: "block", sm: "none" }}>
+                    <MenuIcon fontSize="large" />
+                </Box>
+            </Box>
+        }
 
+        <DrawerUserMenu 
+            onClose={toggleOpen}
+            open={openMenu}
+            userID={userId}
+            isAdmin={admin}
+        />
     </Box>
   );
 };
