@@ -5,9 +5,10 @@ import Link from "next/link"
 import { PostLocation } from "./PostLocation"
 import { useEffect, useState } from "react"
 import { getUserFromClerk } from "@/app/actions"
+import { useUser } from "@clerk/nextjs"
 
 type Props = {
-    userID: string
+    userID?: string
     showLocation?: boolean
     lat?: number
     lon?: number
@@ -20,22 +21,32 @@ type Props = {
 
 export const UserBadge = ({ userID, showLocation, lat, lon, placeName, county, municipality, hideImg, hideLink } : Props) => {
 
+    const { user } = useUser()
     const [loading, setLoading] = useState(false)
     const [userData, setUserData] = useState({
       imageUrl: "",
       username: ""
     })
-  
+
     useEffect(() => {
-      const fetchUser = async() => {
-        setLoading(true)
-        const result = await getUserFromClerk(userID)
-        if(result.success) {
-            setUserData({ username: result.username || "user", imageUrl: result.imageUrl })
-            setLoading(false)
+        if(!user) return
+        setUserData({
+            username: user.username || "",
+            imageUrl: user.imageUrl
+        })
+    }, [user])
+  
+    useEffect(() => {  
+        if(!userID) return
+        const fetchUser = async() => {
+            setLoading(true)
+            const result = await getUserFromClerk(userID)
+            if(result.success) {
+                setUserData({ username: result.username || "user", imageUrl: result.imageUrl })
+                setLoading(false)
+            }
         }
-      }
-      fetchUser()
+        fetchUser()
     }, [])
 
     if(hideLink) {

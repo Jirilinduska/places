@@ -13,6 +13,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import AppLogo from "./AppLogo"
 import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import { useIsMobile } from "@/hooks/useIsMobile"
 
 type Props = {
     open: boolean
@@ -24,6 +25,7 @@ type Props = {
 export const DrawerUserMenu = ({ open, onClose, userID, isAdmin } : Props) => {
 
     const { signOut } = useClerk()
+    const isMobile = useIsMobile()
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
@@ -43,32 +45,38 @@ export const DrawerUserMenu = ({ open, onClose, userID, isAdmin } : Props) => {
                 <AppLogo hideLink/>
             </Box>
 
-            <Link 
-                href={`/profile/${userID}`}
-                onClick={onClose}
-                className="flex items-center gap-3 p-2 cursor-pointer text-white hover:bg-gray-600 hover:rounded-lg"
-            >
-                <AccountCircleIcon />
-                <Typography fontWeight={500}>My profile</Typography>
-            </Link>
+            {/* // Na menších displayech je tohle u bottom menu :) */}
+            {!isMobile && 
+                <>
+                    <Link 
+                        href={`/profile/${userID}`}
+                        onClick={onClose}
+                        className="flex items-center gap-3 p-2 cursor-pointer text-white hover:bg-gray-600 hover:rounded-lg"
+                    >
+                        <AccountCircleIcon />
+                        <Typography fontWeight={500}>My profile</Typography>
+                    </Link>
 
-            <Link 
-                href={`/`}
-                onClick={onClose}
-                className="flex items-center gap-3 p-2 cursor-pointer text-white hover:bg-gray-600 hover:rounded-lg"
-            >
-                <SpaceDashboardIcon />
-                <Typography fontWeight={500}>Dashboard</Typography>
-            </Link>
+                    <Link 
+                        href={`/`}
+                        onClick={onClose}
+                        className="flex items-center gap-3 p-2 cursor-pointer text-white hover:bg-gray-600 hover:rounded-lg"
+                    >
+                        <SpaceDashboardIcon />
+                        <Typography fontWeight={500}>Dashboard</Typography>
+                    </Link>
 
-            <Link 
-                href={`/feed`}
-                onClick={onClose}
-                className="flex items-center gap-3 p-2 cursor-pointer text-white hover:bg-gray-600 hover:rounded-lg"
-            >
-                <DynamicFeedIcon />
-                <Typography fontWeight={500}>Feed</Typography>
-            </Link>
+                    <Link 
+                        href={`/feed`}
+                        onClick={onClose}
+                        className="flex items-center gap-3 p-2 cursor-pointer text-white hover:bg-gray-600 hover:rounded-lg"
+                    >
+                        <DynamicFeedIcon />
+                        <Typography fontWeight={500}>Feed</Typography>
+                    </Link>
+                </>
+            }
+
 
             <Link 
                 href={`/profile/${userID}/been`}

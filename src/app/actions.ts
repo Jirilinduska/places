@@ -4,7 +4,7 @@ import { isAdminHelper } from "@/helpers/isAdmin"
 import { ActitivyReason, IPost, ReportReason, ResolveReport } from "@/interfaces/interfaces"
 import { CreateActivityServiceType, GetActivitiesServiceType, createActivityService, getActivitiesService } from "@/services/activities"
 import { GetAdminAppSettingsServiceType, GetProfileBackgroundsServiceType, UploadAdminProfileBgImageServiceType, getAdminAppSettingsService, getProfileBackgroundsService, uploadAdminProfileBgImageService } from "@/services/app-settings"
-import { BanUserServiceType, ChangeUsernameClerkServiceType, DeleteUserImgByAdminServiceType, GetUserFromClerkServiceType, GetUserNameFromClerkServiceType, UnbanUserServiceType, banUserService, changeUsernameClerkService, deleteUserImgByAdminService, getUserFromClerkService, getUsernameFromClerkService, unbanUserService } from "@/services/clerk"
+import { BanUserServiceType, ChangeImageClerkServiceType, ChangeUsernameClerkServiceType, DeleteUserImgServiceType, GetUserFromClerkServiceType, GetUserNameFromClerkServiceType, UnbanUserServiceType, banUserService, changeImageClerkService, changeUsernameClerkService, deleteUserImgService, getUserFromClerkService, getUsernameFromClerkService, unbanUserService } from "@/services/clerk"
 import { DeleteImageFromCloudinaryServiceType, deleteImageFromCloudinaryService } from "@/services/cloudinary"
 import { GetErrLogsServiceType, MarkErrLogAsSolvedServiceType, getErrLogsService, logErrorService, markErrLogAsSolvedService } from "@/services/error-logs"
 import { DeletePostServiceType, UpdatePostServiceType, deletePostService, updatePostService } from "@/services/posts"
@@ -25,6 +25,10 @@ export async function changeUsernameClerk(userId: string, newUsername: string) :
     return changeUsernameClerkService(userId, newUsername)
 }
 
+export async function changeImageClerk(formData: FormData) : Promise<ChangeImageClerkServiceType> {
+    return changeImageClerkService(formData)
+}
+
 export async function banUser(userId: string) : Promise<BanUserServiceType> {
     const { errorMsg, isAdmin } = await isAdminHelper()
     if(!isAdmin) return { success: false, errMsg: errorMsg! }
@@ -42,6 +46,10 @@ export async function deleteImageFromCloudinary(imgPublicUrl: string) : Promise<
     return deleteImageFromCloudinaryService(imgPublicUrl)
 }
 
+// ========== USERS ==========
+export async function deleteProfileImg(userIdToDelete: string) {
+    return deleteUserImgService(userIdToDelete)
+}
 
 // ========== USERS MONGO_DB ==========
 export async function getUserFromMongo(userID: string) : Promise<GetUserFromMongoServiceType> {
@@ -107,10 +115,10 @@ export async function resolveReport(reportID: string, resolved: ResolveReport, s
     return await resolveReportService(reportID, resolved, solvedComment)
 }
 
-export async function deleteUserImgByAdmin(userIdToDelete: string) : Promise<DeleteUserImgByAdminServiceType> {
+export async function deleteUserImgByAdmin(userIdToDelete: string) : Promise<DeleteUserImgServiceType> {
     const { errorMsg, isAdmin } = await isAdminHelper()
     if(!isAdmin) return { success: false, errMsg: errorMsg! }
-    return await deleteUserImgByAdminService(userIdToDelete)
+    return await deleteUserImgService(userIdToDelete)
 }
 
 export async function deleteUserByAdmin(userIdToDelete: string) : Promise<DeleteUserForoverServiceType> {

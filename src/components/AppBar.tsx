@@ -1,7 +1,6 @@
 "use client"
 
-import { Box, Typography } from "@mui/material";
-import Link from "next/link"
+import { Box } from "@mui/material";
 import { useAuth } from "@clerk/nextjs"
 import { UserBadge } from "./UserBadge"
 import { AppNavigation } from "./AppNavigation"
@@ -9,6 +8,7 @@ import { useEffect, useState } from "react"
 import { DrawerUserMenu } from "./DrawerUserMenu"
 import { getUserFromMongo } from "@/app/actions"
 import MenuIcon from '@mui/icons-material/Menu';
+import AppLogo from "./AppLogo"
 
 export const AppBar = () => {
 
@@ -48,26 +48,13 @@ export const AppBar = () => {
         px={2}
         zIndex={100}
     >
-
-        <Box>
-            <Link href="/" className="flex items-center gap-2">
-                <img 
-                    width={40} 
-                    height={40}
-                    className="rounded-full"
-                    src="/images/earth_logo.png"
-                    alt="PlacesBeen"
-                />
-                <Typography fontWeight={600}>PlacesBeen</Typography>
-            </Link>
-        </Box>
-
+        <AppLogo />
         <AppNavigation />
 
         {userId && 
             <Box onClick={toggleOpen}>
                 <Box display={{ xs: "none", sm: "block" }}>
-                    <UserBadge userID={userId} hideLink />
+                    <UserBadge hideLink />
                 </Box>
                 <Box display={{ xs: "block", sm: "none" }}>
                     <MenuIcon fontSize="large" />

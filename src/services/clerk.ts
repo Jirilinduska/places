@@ -3,7 +3,7 @@ import { handleError } from "@/helpers/handleError"
 import { getPublicIdFromUrl } from "@/lib/cloudinary"
 import { connectDB } from "@/lib/mongo"
 import { UserMongo } from "@/models/UserMongo"
-import { clerkClient } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 
 export type GetUserFromClerkServiceType =
   | { success: true, username: string, imageUrl: string}
@@ -136,11 +136,38 @@ export async function changeUsernameClerkService(userId: string, newUsername: st
     }
 }
 
-export type DeleteUserImgByAdminServiceType =
+export type ChangeImageClerkServiceType =
   | { success: true }
   | { success: false, errMsg: string }
 
-export async function deleteUserImgByAdminService(userIdToDelete: string) : Promise<DeleteUserImgByAdminServiceType> {
+export async function changeImageClerkService(formData: FormData) : Promise<ChangeImageClerkServiceType> {
+
+    try {
+        const { userId } = await auth()
+        if (!userId) throw new Error("Unauthorized")
+        
+        const file = formData.get("file") as File | null
+        if (!file) throw new Error("No file uploaded")
+            
+        const client = await clerkClient()
+        await client.users.updateUserProfileImage(userId, { file })
+
+        return { success: true }   
+    } catch (error) {
+        const { errMsg } = await handleError(error, {
+            action: "Change clerk image",        
+            component: "changeImageClerkService()",
+            input: { formData }
+        })
+        return { success: false, errMsg }
+    }
+}
+
+export type DeleteUserImgServiceType =
+  | { success: true }
+  | { success: false, errMsg: string }
+
+export async function deleteUserImgService(userIdToDelete: string) : Promise<DeleteUserImgServiceType> {
     try {
 
         const client = await clerkClient()
@@ -149,8 +176,6 @@ export async function deleteUserImgByAdminService(userIdToDelete: string) : Prom
         if(!userClerk) {
             throw new Error("User not found in clerk database")
         }
-
-        await connectDB()
 
         const currentImg = userClerk.imageUrl
 
@@ -163,8 +188,8 @@ export async function deleteUserImgByAdminService(userIdToDelete: string) : Prom
         return { success: true }
     } catch (error: unknown) {
         const { errMsg } = await handleError(error, {
-            action: "Delete user profile image by admin",        
-            component: "deleteUserImgByAdminService()",
+            action: "Delete user profile image",        
+            component: "deleteUserImgService()",
             input: { userIdToDelete }
         })
         return { success: false, errMsg }

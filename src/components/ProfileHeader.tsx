@@ -28,6 +28,7 @@ export const ProfileHeader = ({ backgroundImg, profileImg, username, profileID, 
       display="flex"
       alignItems="center"
       justifyContent="center"
+      flexDirection="column"
       sx={{
         backgroundImage: `url(${backgroundImg})`,
         backgroundRepeat: "no-repeat",
@@ -37,16 +38,27 @@ export const ProfileHeader = ({ backgroundImg, profileImg, username, profileID, 
         backgroundBlendMode: "darken",
       }}
     >
-      <Box width={200} height={200}>
-        <img
-          src={profileImg}
-          alt={username}
-          className="w-full h-full rounded-full"
-        />
-       {username &&  
-        <Typography
+        <Box
+          width={200}
+          height={200}
+          borderRadius="50%"
+          overflow="hidden"
+          position="relative"
+          sx={{
+            boxShadow: "0 0 20px rgba(255,255,255,0.6)",
+            border: "4px solid white",
+          }}
+        >
+          <img
+            src={profileImg}
+            alt={username}
+            className="w-full h-full rounded-full object-cover"
+          />
+        </Box>
+
+      {username && <Typography
           bgcolor="black"
-          py={1}
+          p={1}
           borderRadius={borderRadius}
           textAlign="center"
           fontWeight={600}
@@ -55,7 +67,6 @@ export const ProfileHeader = ({ backgroundImg, profileImg, username, profileID, 
         >
           @{username}
         </Typography>}
-      </Box>
 
       {isContentMine(userID, profileID) && (
         <Box className="cursor-pointer absolute bottom-4 right-4">

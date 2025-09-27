@@ -1,6 +1,6 @@
 "use client";
 
-import { Dashboard, Feed } from "@mui/icons-material"
+import { Dashboard } from "@mui/icons-material"
 import { BottomNavigation, BottomNavigationAction, Box, Typography } from "@mui/material"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useRouter } from "next/navigation"
@@ -9,6 +9,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { DrawerAddPlace } from "./DrawerAddPlace"
 import { useState } from "react"
 import { useIsMobile } from "@/hooks/useIsMobile"
+import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
 import Link from "next/link"
 
 export const AppNavigation = () => {
@@ -30,7 +31,7 @@ export const AppNavigation = () => {
         {!isMobile && (
             <Box display="flex" alignItems="center" gap={4} justifyContent="flex-end" width="100%">
                 <Link href="/feed" className="flex flex-col items-center gap-1">
-                    <Feed />
+                    <DynamicFeedIcon />
                     <Typography fontSize="12px">Feed</Typography>
                 </Link> 
                 <Box 
@@ -67,7 +68,7 @@ export const AppNavigation = () => {
                     <BottomNavigationAction 
                         sx={{ color: "white" }}
                         label="Feed" 
-                        icon={<Feed />} 
+                        icon={<DynamicFeedIcon />} 
                         onClick={() => router.push("/feed")}
                     />
                     

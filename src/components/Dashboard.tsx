@@ -8,8 +8,6 @@ import { DashboardValues, IDashboardData, IPinsWithPopup } from "@/interfaces/in
 import dynamic from "next/dynamic"
 import type { AppMapProps } from "./AppMap"
 import { DashboardPlaces } from "./DashboardPlaces"
-import { DashboardSettings } from "./DashboardSettings"
-import { useIsMobile } from "@/hooks/useIsMobile"
 const AppMap = dynamic<AppMapProps>(
     () => import("./AppMap").then((mod) => mod.AppMap),
     { ssr: false }
@@ -41,8 +39,6 @@ type DashboardState = {
 
 export const Dashboard = () => {
 
-    const isMobile = useIsMobile()
-
     const [state, setState] = useState<DashboardState>({
         loading: false,
         value: "_stats_",
@@ -53,7 +49,6 @@ export const Dashboard = () => {
     const [data, setData] = useState<IDashboardData>()
     const [pinsOnMap, setPinsOnMap] = useState<IPinsWithPopup[]>([])
     const [selectedPin, setSelectedPin] = useState<IPinsWithPopup | null>(null)
-    const [isChange, setIsChange] = useState(1)
 
     const handleChange = (event: React.SyntheticEvent, newValue: DashboardValues) => {
         setState((prev) => ({...prev, value: newValue}))
@@ -68,8 +63,6 @@ export const Dashboard = () => {
             }))
     }
     
-    // TODO - asi odstranit
-    const toggleChange = () => setIsChange(prev => prev + 1)
 
     useEffect(() => {
         if(!data) return
@@ -104,7 +97,7 @@ export const Dashboard = () => {
             }
         }
         fetchData()
-    }, [isChange])
+    }, [])
 
   return (
     <Box minHeight="100vh" py={{ xs: 12, lg: 0 }} display="flex" alignItems="center" justifyContent="center" flexDirection="column">
@@ -115,7 +108,6 @@ export const Dashboard = () => {
                     <Tab label="Stats" value="_stats_" />
                     <Tab label="Visited places" value="_visited_" />
                     <Tab label="Want visit" value="_want_visit_" />
-                    {!isMobile && <Tab label="Settings" value="_settings_" />}
                 </Tabs>
             </Box>
         </Box>
@@ -143,8 +135,6 @@ export const Dashboard = () => {
                         onTitleClick={handleItemClick}
                     />
                 )}
-
-                {state.value === "_settings_" && <DashboardSettings loading={state.loading} toggleChange={toggleChange} />}
 
             </Box>
 
